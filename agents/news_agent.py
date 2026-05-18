@@ -36,7 +36,7 @@ def create_news_agent() -> Agent:
         temperature=0.3,
         max_tokens=1100,       # sentiment + 3-5 headlines + catalysts fits in ~1k tokens
         timeout=1800,
-        extra_body={"options": {"num_ctx": 6144}},  # news content + data context fits in 6k
+        extra_body={"think": False},  # disable qwen3 CoT thinking — saves tokens for actual output
     )
 
     return Agent(

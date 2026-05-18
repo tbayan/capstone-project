@@ -37,7 +37,7 @@ def create_data_agent() -> Agent:
         temperature=0.1,
         max_tokens=900,        # data summaries are concise; cap prevents rambling
         timeout=1800,
-        extra_body={"options": {"num_ctx": 4096}},  # 3 tool calls + response fits in 4k
+        extra_body={"think": False},  # disable qwen3 CoT thinking — saves tokens for actual output
     )
 
     return Agent(

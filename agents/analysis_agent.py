@@ -35,7 +35,7 @@ def create_analysis_agent() -> Agent:
         temperature=0.4,
         max_tokens=2200,       # 7-section narrative report; generous but bounded
         timeout=1800,
-        extra_body={"options": {"num_ctx": 8192}},  # data + news context + report generation
+        extra_body={"think": False},  # disable qwen3 CoT thinking — saves tokens for actual output
     )
 
     return Agent(
