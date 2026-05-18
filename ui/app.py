@@ -683,7 +683,7 @@ st.markdown("""
         </svg>
     </div>
     <span style="font-size:1.08rem;font-weight:700;color:#dde6f0;letter-spacing:-.01em;">Financial News Analyst</span>
-    <span style="font-size:.58rem;color:#3a4a6a;font-family:'Fira Code',monospace;letter-spacing:.06em;">qwen3:32b</span>
+    <span style="font-size:.58rem;color:#3a4a6a;font-family:'Fira Code',monospace;letter-spacing:.06em;">qwen2.5:7b</span>
 </div>
 """, unsafe_allow_html=True)
 
