@@ -27,7 +27,7 @@ logs/
 *.sqlite3
 
 # RAG vector store (large binary, regenerated on startup)
-financial_news_analyst/rag/chroma_db/
+rag/chroma_db/
 
 # IDE / OS
 .vscode/
@@ -45,3 +45,6 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+Capstone_project_Talgar_Bayan.txt
+Capstone_project_screening.md
+capston_project_requirments_and_results.md
