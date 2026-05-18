@@ -33,9 +33,9 @@ def create_analysis_agent() -> Agent:
         model=AGENT_MODEL,
         base_url=OLLAMA_BASE_URL,
         temperature=0.4,
-        max_tokens=2200,       # 7-section narrative report; generous but bounded
+        max_tokens=3000,       # thinking tokens + 7-section report; extra headroom for qwen3 CoT
         timeout=1800,
-        extra_body={"think": False},  # disable qwen3 CoT thinking — saves tokens for actual output
+        extra_body={"think": True},   # enable qwen3 reasoning for investment analysis
     )
 
     return Agent(

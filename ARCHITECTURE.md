@@ -10,7 +10,7 @@
 
 | Component | Technology | Rationale |
 |-----------|-----------|-----------|
-| **LLM** | Ollama + qwen2.5:7b | Local inference, fast on dual 4090 (~1-2s/step), no API costs, GDPR-safe |
+| **LLM** | Ollama + qwen3:8b | Local inference, fast on dual 4090 (~1-2s/step), no API costs, GDPR-safe |
 | **Agent Framework** | CrewAI | Role-based agents with task chaining; clean abstraction over LangChain |
 | **MCP Server** | FastMCP (custom-built) | Project-owned MCP server using the official MCP Python SDK; no third-party servers |
 | **Vector Store** | ChromaDB | Lightweight, embedded, no infrastructure needed, persists to disk |
