@@ -167,7 +167,7 @@ This change made the news feed consistently return 3–10 relevant articles per 
 
 | Deliverable | Status | Location |
 |---|---|---|
-| Architecture Blueprint | ✅ Complete | `ARCHITECTURE.md` |
+| Architecture Blueprint | ✅ Complete | `ARCHITECTURE_Blueprint.md` |
 | Executive Summary | ✅ Complete | `EXECUTIVE_SUMMARY.md` |
 | System Overview | ✅ Complete | `SYSTEM_OVERVIEW.md` |
 | Self-Review (this doc) | ✅ Complete | `SELF_REVIEW.md` |

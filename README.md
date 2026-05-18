@@ -8,6 +8,21 @@ Repository: [github.com/tbayan/capstone-project](https://github.com/tbayan/capst
 
 ---
 
+## Deliverables
+
+| Deliverable | File | Status |
+|-------------|------|--------|
+| Architecture Blueprint | [ARCHITECTURE_Blueprint.md](ARCHITECTURE_Blueprint.md) | ✅ Complete |
+| Executive Summary | [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) | ✅ Complete |
+| Self-Review | [SELF_REVIEW.md](SELF_REVIEW.md) | ✅ Complete |
+| System Overview (bonus) | [SYSTEM_OVERVIEW.md](SYSTEM_OVERVIEW.md) | ✅ Complete |
+| Code Repository | this repo | ✅ Complete |
+| Test Suite (96 tests) | [tests/](tests/) | ✅ Complete |
+| README & Setup | [README.md](README.md) | ✅ Complete |
+| Video Demo | *(link will be added after recording)* | ⏳ Pending |
+
+---
+
 ## What it does
 
 A user enters a stock or crypto ticker and a research question (e.g. *"What are the key risk factors for NVDA heading into Q3?"*). The platform:
@@ -239,7 +254,7 @@ pytest tests/test_security.py tests/test_mcp_server.py -v
 │   └── test_agents.py            — End-to-end + adversarial pipeline tests
 ├── config/
 │   └── settings.py               — Central configuration (all overridable via .env)
-├── ARCHITECTURE.md               — Complete system design & technology rationale
+├── ARCHITECTURE_Blueprint.md      — Complete system design & technology rationale
 ├── EXECUTIVE_SUMMARY.md          — 1-2 page business overview
 ├── SYSTEM_OVERVIEW.md            — Technical system overview
 ├── SELF_REVIEW.md                — Architecture decisions & trade-offs
