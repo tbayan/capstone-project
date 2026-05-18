@@ -1,7 +1,5 @@
 # Financial News Analyst
 
-**Capstone Project — EPAM AI/ML Engineering Programme**  
-Author: Talgar Bayan · tbayan@epam.com  
 Repository: [github.com/tbayan/capstone-project](https://github.com/tbayan/capstone-project)
 
 > A local, zero-egress multi-agent investment research system.  
