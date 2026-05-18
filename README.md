@@ -287,23 +287,6 @@ Receives context from agents 01 and 02. Calls `retrieve_historical_patterns` (RA
 
 ---
 
-## Deliverables
-
-| Deliverable | Location | Status |
-|-------------|----------|--------|
-| Architecture Blueprint | [docs/architecture_blueprint.md](docs/architecture_blueprint.md) | ✅ |
-| Executive Summary | [docs/executive_summary.md](docs/executive_summary.md) | ✅ |
-| System Overview | [docs/SYSTEM_OVERVIEW.md](docs/SYSTEM_OVERVIEW.md) | ✅ |
-| Code — Agents | `agents/` | ✅ |
-| Code — MCP Server | `mcp_server/` | ✅ |
-| Code — RAG Pipeline | `rag/` | ✅ |
-| Code — Orchestrator | `orchestrator/` | ✅ |
-| Code — UI | `ui/` | ✅ |
-| Test Suite (78+ tests) | `tests/` | ✅ |
-| Video Demo | See submission file | ⏳ |
-
----
-
 ## Configuration Reference
 
 All settings live in `config/settings.py` and are fully overridable via `.env`:
