@@ -1,0 +1,37 @@
+=== GUIDE: INVESTMENT RISK MANAGEMENT FRAMEWORK ===
+
+All investment analysis must include a risk assessment. No analysis is complete without
+identifying downside scenarios and quantifying potential loss.
+
+KEY RISK METRICS:
+- Beta: Sensitivity to market movements. Beta > 1 = amplifies market moves. Beta < 1 = defensive.
+- Sharpe Ratio: (Return - Risk-free rate) / Standard Deviation. Higher = better risk-adjusted return.
+- Max Drawdown: Largest peak-to-trough decline. Measures tail risk.
+- Volatility (30-day): Standard deviation of daily returns. Higher = more uncertain.
+
+RISK CATEGORIES:
+1. Market Risk (Systematic): Overall market decline affects all stocks. Diversification helps but cannot eliminate.
+2. Company-Specific Risk (Idiosyncratic): Earnings miss, CEO departure, product failure, litigation.
+3. Sector/Industry Risk: Regulatory changes (pharma, fintech), commodity price shifts (energy), rate sensitivity (REITs).
+4. Macro Risk: Recession, inflation shock, geopolitical events, central bank policy shifts.
+5. Liquidity Risk: Inability to exit a position at desired price. More relevant for small-cap stocks.
+6. Concentration Risk: Too much exposure to a single stock, sector, or theme.
+
+POSITION SIZING PRINCIPLES:
+- 2% Rule: Never risk more than 2% of portfolio on a single trade.
+- Kelly Criterion: Optimal position size based on edge and win probability.
+- Diversification: Target 20–30 uncorrelated positions to reduce idiosyncratic risk.
+
+STOP-LOSS AND RISK/REWARD:
+- Minimum acceptable risk/reward ratio: 1:2 (risk $1 to make $2).
+- Hard stop-loss: Predetermined exit price to limit downside.
+- Trailing stop: Moves up with price to lock in gains.
+
+BEAR CASE ANALYSIS:
+Always model a bear case scenario:
+- What if revenue growth is half of expectations?
+- What if multiple compresses to sector average (or below)?
+- What is the downside price target if the investment thesis is wrong?
+
+IMPORTANT: This framework is for educational and analytical purposes only.
+Past patterns do not guarantee future results. All investments carry risk of loss.

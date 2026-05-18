@@ -1,0 +1,18 @@
+=== COMPANY ANALYSIS: Amazon.com, Inc. (AMZN) ===
+
+Sector: Consumer Cyclical
+Market Capitalization: $2841.4B
+Trailing P/E Ratio: 31.633533
+Earnings Per Share (EPS): 8.35
+Revenue Growth (YoY): 16.6%
+Profit Margin: 12.2%
+52-Week High: 278.56 | 52-Week Low: 196.0
+Analyst Recommendation: strong_buy | Analyst Price Target: 311.55145
+  Latest Quarterly Revenue: $181.52B
+  Latest Quarterly Net Income: $30.25B
+
+Business Description:
+Amazon.com, Inc. engages in the retail sale of consumer products, advertising, and subscriptions service through online and physical stores in North America and internationally. The company operates through three segments: North America, International, and Amazon Web Services (AWS). It also manufactures and sells electronic devices, including Kindle, fire tablets, fire TVs, echo, ring, blink, and 
+
+Investment Context:
+A P/E ratio of 31.633533 for Amazon.com, Inc. should be evaluated relative to its sector peers in Consumer Cyclical. Revenue growth of 16.6% and profit margins of 12.2% are key indicators of operational efficiency. Analyst consensus of 'strong_buy' with a target price of 311.55145 reflects current Wall Street sentiment.

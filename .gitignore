@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables / secrets
+.env
+*.env
+
+# Logs & databases
+logs/
+*.log
+*.db
+*.sqlite3
+
+# RAG vector store (large binary, regenerated on startup)
+financial_news_analyst/rag/chroma_db/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/

@@ -1,0 +1,34 @@
+=== GUIDE: MACROECONOMIC SIGNALS AND THEIR MARKET IMPACT ===
+
+Macro signals affect all asset classes. Understanding them is essential for top-down investment analysis.
+
+INTEREST RATES (Federal Reserve Policy):
+- Rate hike cycle: Higher rates increase borrowing costs → compress P/E multiples → headwind for growth stocks. Benefit: value stocks, financials (wider net interest margin).
+- Rate cut cycle: Lower rates reduce discount rates → expand P/E multiples → tailwind for growth and tech. Bonds rally.
+- Fed Funds Rate above 4%: Generally contractionary territory, watch for recession signals.
+- Inverted yield curve (2yr > 10yr): Historical predictor of recession within 12–18 months.
+
+INFLATION (CPI / PCE):
+- High inflation (>4%): Fed likely to raise rates → negative for bonds and growth stocks → positive for commodities, energy, TIPS.
+- Moderate inflation (2–3%): Goldilocks zone — supports earnings without forcing aggressive Fed action.
+- Deflation: Dangerous — signals weak demand, leads to corporate earnings compression.
+- Core CPI vs Headline CPI: Core (excludes food/energy) is the Fed's preferred measure.
+
+GDP GROWTH:
+- GDP growth > 3%: Strong expansion, supportive of corporate earnings and equities.
+- GDP growth 1–3%: Moderate growth, selective stock picking important.
+- GDP growth < 0% (two consecutive quarters): Technical recession. Defensives outperform.
+
+UNEMPLOYMENT:
+- Low unemployment (<4%): Strong consumer spending, supports retail and consumer discretionary.
+- Rising unemployment: Leading indicator of consumer stress, watch credit card delinquencies.
+
+SECTOR ROTATION BY ECONOMIC CYCLE:
+- Early cycle (recovery): Financials, Consumer Discretionary, Real Estate outperform.
+- Mid cycle (expansion): Technology, Industrials, Materials lead.
+- Late cycle (slowdown): Energy, Healthcare, Consumer Staples are defensive.
+- Recession: Utilities, Healthcare, Consumer Staples — the classic defensives.
+
+DOLLAR INDEX (DXY):
+- Strong dollar: Headwind for US multinationals (revenue in foreign currencies converts to fewer dollars). Positive for US consumers (cheaper imports).
+- Weak dollar: Tailwind for US exporters and emerging market assets.

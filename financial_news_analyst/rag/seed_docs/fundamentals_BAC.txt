@@ -1,0 +1,18 @@
+=== COMPANY ANALYSIS: Bank of America Corporation (BAC) ===
+
+Sector: Financial Services
+Market Capitalization: $353.2B
+Trailing P/E Ratio: 12.349875
+Earnings Per Share (EPS): 4.03
+Revenue Growth (YoY): 8.1%
+Profit Margin: 29.0%
+52-Week High: 57.55 | 52-Week Low: 42.35
+Analyst Recommendation: strong_buy | Analyst Price Target: 62.97826
+  Latest Quarterly Revenue: $30.27B
+  Latest Quarterly Net Income: $8.58B
+
+Business Description:
+Bank of America Corporation, through its subsidiaries, provides various financial products and services for individual consumers, small and middle-market businesses, institutional investors, large corporations, and governments worldwide. It operates through four segments: Consumer Banking, Global Wealth & Investment Management (GWIM), Global Banking, and Global Markets. The Consumer Banking segmen
+
+Investment Context:
+A P/E ratio of 12.349875 for Bank of America Corporation should be evaluated relative to its sector peers in Financial Services. Revenue growth of 8.1% and profit margins of 29.0% are key indicators of operational efficiency. Analyst consensus of 'strong_buy' with a target price of 62.97826 reflects current Wall Street sentiment.

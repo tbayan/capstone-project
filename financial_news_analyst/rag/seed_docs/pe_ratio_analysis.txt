@@ -1,0 +1,29 @@
+=== GUIDE: PRICE-TO-EARNINGS (P/E) RATIO INTERPRETATION ===
+
+The Price-to-Earnings (P/E) ratio is one of the most widely used valuation metrics.
+It measures how much investors are willing to pay per dollar of earnings.
+
+FORMULA: P/E = Current Stock Price / Earnings Per Share (EPS)
+
+INTERPRETATION RANGES:
+- P/E < 10: Potentially undervalued, or market expects declining earnings. Common in mature or cyclical industries (energy, banking).
+- P/E 10–20: Fair value range for stable, mature companies with moderate growth.
+- P/E 20–35: Growth premium — market expects above-average earnings growth. Typical for tech sector leaders.
+- P/E 35–60: High growth expectations. Common in hypergrowth tech, biotech. Higher risk of multiple compression.
+- P/E > 60: Speculative territory. Often seen in early-stage growth or turnaround stories. Requires exceptional growth to justify.
+
+CONTEXT MATTERS:
+- Always compare P/E to the sector average. A P/E of 30 may be cheap for software but expensive for utilities.
+- Forward P/E (based on projected earnings) is often more useful than trailing P/E.
+- A negative P/E means the company is currently unprofitable.
+- PEG ratio (P/E divided by earnings growth rate) adjusts for growth: PEG < 1 is generally considered undervalued.
+
+SECTOR AVERAGES (approximate):
+- Technology: 25–40
+- Healthcare: 20–30
+- Financials: 10–15
+- Energy: 8–15
+- Utilities: 15–20
+- Consumer Discretionary: 20–30
+
+HISTORICAL PATTERN: The S&P 500 average P/E has ranged from ~7 (1980 lows) to ~45 (dot-com peak). The long-run average is approximately 15–17.

@@ -1,0 +1,44 @@
+=== GUIDE: SECTOR ROTATION STRATEGIES ===
+
+Sector rotation is the practice of shifting investment capital between industry sectors
+based on expected performance at different stages of the economic cycle.
+
+THE 11 GICS SECTORS (S&P 500):
+1. Information Technology (IT)
+2. Healthcare
+3. Financials
+4. Consumer Discretionary
+5. Communication Services
+6. Industrials
+7. Consumer Staples
+8. Energy
+9. Materials
+10. Real Estate (REITs)
+11. Utilities
+
+ROTATION FRAMEWORK:
+- Bull market early phase: Cyclicals (Consumer Discretionary, Technology, Financials) lead.
+- Bull market mature phase: Energy, Materials, Industrials catch up as demand peaks.
+- Bear market early phase: Defensives rotate in: Healthcare, Consumer Staples, Utilities.
+- Bear market deep phase: Cash, Treasuries, Gold outperform equities.
+
+KEY METRICS FOR SECTOR COMPARISON:
+- Relative Strength (RS): Sector ETF price vs S&P 500. RS > 1 = outperforming.
+- Earnings Revision Breadth: Sectors with more upward analyst revisions tend to outperform.
+- Forward P/E vs 10-year average: Cheap sectors relative to history are candidates for rotation.
+
+TECHNOLOGY SECTOR SPECIFICS:
+- Highly sensitive to interest rates (long-duration assets).
+- Revenue growth and free cash flow margin are more important than P/E for high-growth names.
+- Semiconductor cycle (NVDA, AMD, INTC) is distinct from software cycle.
+- AI infrastructure spending (hyperscalers: MSFT, GOOGL, AMZN, META) drives chipmaker demand.
+
+FINANCIAL SECTOR SPECIFICS:
+- Banks benefit from steeper yield curves (borrow short, lend long).
+- Net Interest Margin (NIM) expands with rising rates.
+- Credit quality (NPL ratio) deteriorates in recessions.
+
+ENERGY SECTOR SPECIFICS:
+- Highly correlated with oil price (WTI Crude, Brent).
+- Oil above $80/bbl generally very profitable for major integrated oil companies.
+- ESG headwinds but strong free cash flow generation in recent cycles.

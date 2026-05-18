@@ -1,0 +1,36 @@
+=== GUIDE: KEY TECHNICAL ANALYSIS PATTERNS FOR STOCKS ===
+
+Technical analysis studies price and volume patterns to forecast future price movement.
+
+SUPPORT AND RESISTANCE:
+- Support level: A price floor where buying interest is strong enough to prevent further decline. The more times a price bounces off a level, the stronger the support.
+- Resistance level: A price ceiling where selling pressure overcomes buying. When resistance is broken, it often becomes new support.
+- Breakout: Price decisively moving above resistance (bullish signal) or below support (bearish signal).
+
+MOVING AVERAGES:
+- 50-day SMA (Simple Moving Average): Short-to-medium trend indicator. Price above 50-day SMA is generally bullish.
+- 200-day SMA: Long-term trend indicator. Golden Cross (50-day crosses above 200-day) is a major bullish signal. Death Cross is bearish.
+- EMA (Exponential Moving Average): Weights recent prices more heavily, reacts faster to price changes.
+
+RELATIVE STRENGTH INDEX (RSI):
+- RSI measures momentum on a scale of 0–100.
+- RSI > 70: Overbought — potential pullback or reversal signal.
+- RSI < 30: Oversold — potential bounce or reversal signal.
+- RSI divergence (price makes new high but RSI doesn't) warns of weakening momentum.
+
+VOLUME ANALYSIS:
+- Rising price + rising volume: Confirms the trend (strong signal).
+- Rising price + falling volume: Trend may be weakening (divergence warning).
+- High volume on breakout: Increases reliability of the breakout signal.
+
+COMMON CHART PATTERNS:
+- Head and Shoulders: Bearish reversal pattern — three peaks with the middle being highest.
+- Cup and Handle: Bullish continuation — price forms a 'U' shape then a brief dip.
+- Double Top / Double Bottom: Reversal patterns at resistance / support.
+- Ascending Triangle: Bullish — higher lows with flat resistance ceiling, often breaks upward.
+
+BOLLINGER BANDS:
+- Two standard deviations above/below the 20-day SMA.
+- Price touching upper band: Overbought region.
+- Price touching lower band: Oversold region.
+- Band squeeze (narrow bands): Indicates low volatility, often precedes a large move.

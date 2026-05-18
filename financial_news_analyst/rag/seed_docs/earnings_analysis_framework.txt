@@ -1,0 +1,39 @@
+=== GUIDE: EARNINGS ANALYSIS FRAMEWORK ===
+
+Earnings season (4 times per year) is when public companies report quarterly financial results.
+Understanding how to interpret earnings reports is critical for investment decisions.
+
+KEY METRICS IN AN EARNINGS REPORT:
+1. Revenue (Top Line): Total sales. Compare to analyst consensus estimates.
+   - Revenue Beat: Actual > Estimate (positive surprise)
+   - Revenue Miss: Actual < Estimate (negative surprise)
+
+2. EPS (Earnings Per Share): Net income / shares outstanding.
+   - GAAP EPS: Includes all items (stock comp, restructuring charges, etc.)
+   - Non-GAAP / Adjusted EPS: Excludes one-time items. Often higher. Watch for quality.
+
+3. Gross Margin: (Revenue - COGS) / Revenue. Measures pricing power.
+4. Operating Margin: Profitability after operating expenses. More comprehensive than gross margin.
+5. Free Cash Flow (FCF): Cash from operations minus capex. "Cash is king" — less manipulable than EPS.
+6. Guidance: Forward-looking revenue/EPS outlook from management. Often more impactful than the actual results.
+
+EARNINGS SURPRISE INTERPRETATION:
+- Beat EPS + Beat Revenue + Raise Guidance: Strongest signal — stock typically rallies.
+- Beat EPS + Miss Revenue: Mixed — operational efficiency but demand concerns.
+- Miss EPS + Beat Revenue: Margin compression — watch cost trajectory.
+- Miss EPS + Miss Revenue + Lower Guidance: Trifecta miss — significant selloff typical.
+
+"BUY THE RUMOR, SELL THE NEWS" PATTERN:
+Stocks that run up significantly into earnings often sell off on "good" results because
+the good news was already priced in. The setup matters as much as the result.
+
+HISTORICAL EARNINGS GROWTH VS PRICE:
+Long-run equity returns closely track earnings growth. S&P 500 earnings grow ~7% annually on average.
+Companies with sustained 15%+ EPS growth (e.g., FAANG names in 2015-2022) command premium multiples.
+When EPS growth decelerates from high levels, multiple compression can be severe.
+
+EARNINGS QUALITY CHECKLIST:
+✓ Does FCF match reported earnings? (High accruals ratio = lower quality)
+✓ Is revenue growth organic or acquisition-driven?
+✓ Is EPS growth driven by buybacks (shares declining) or actual earnings growth?
+✓ Are accounts receivable growing faster than revenue? (Collection risk)
