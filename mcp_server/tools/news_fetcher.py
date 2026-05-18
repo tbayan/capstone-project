@@ -21,6 +21,19 @@ import requests
 from config.settings import RSS_FEEDS
 
 
+# ── Ticker → company-name aliases (for RSS keyword matching) ───────────────────
+_TICKER_ALIASES: dict[str, str] = {
+    "AAPL": "apple",  "NVDA": "nvidia",  "MSFT": "microsoft",
+    "GOOGL": "google", "GOOG": "google",  "AMZN": "amazon",
+    "TSLA": "tesla",  "META": "meta",    "NFLX": "netflix",
+    "BTC": "bitcoin", "ETH": "ethereum", "XRP": "ripple",
+    "JPM": "jpmorgan", "BAC": "bank",   "GS": "goldman",
+    "V": "visa",      "MA": "mastercard", "DIS": "disney",
+    "AMD": "amd",    "INTC": "intel",   "QCOM": "qualcomm",
+    "COIN": "coinbase", "HOOD": "robinhood", "PYPL": "paypal",
+}
+
+
 # ── HTML stripping ─────────────────────────────────────────────────────────────
 
 _HTML_TAG_RE = re.compile(r"<[^>]+>")
@@ -93,7 +106,15 @@ def fetch_financial_news(query: str = "", limit: int = 10) -> list[dict[str, Any
             # filter by query if provided
             if query_lower:
                 combined = (art["title"] + " " + art["summary"]).lower()
-                if query_lower not in combined:
+                # Build set of meaningful words (3+ chars) to match against article
+                match_words: set[str] = {w for w in query_lower.split() if len(w) >= 3}
+                # Also expand ticker symbol to company name (AAPL → apple, BTC → bitcoin)
+                first_token = query.strip().split()[0].upper() if query.strip() else ""
+                alias = _TICKER_ALIASES.get(first_token)
+                if alias:
+                    match_words.add(alias)
+                # Accept article if ANY match word appears in title or summary
+                if match_words and not any(w in combined for w in match_words):
                     continue
             all_articles.append(art)
 
