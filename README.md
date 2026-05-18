@@ -239,12 +239,12 @@ pytest tests/test_security.py tests/test_mcp_server.py -v
 │   ├── test_mcp_server.py        — MCP tool unit + integration tests
 │   ├── test_rag.py               — Retrieval quality tests
 │   └── test_agents.py            — End-to-end + adversarial pipeline tests
-├── docs/
-│   ├── architecture_blueprint.md — Complete system design document
-│   ├── executive_summary.md      — 2-page business-facing overview
-│   └── SYSTEM_OVERVIEW.md        — Technical system overview
 ├── config/
 │   └── settings.py               — Central configuration (all overridable via .env)
+├── ARCHITECTURE.md               — Complete system design & technology rationale
+├── EXECUTIVE_SUMMARY.md          — 1-2 page business overview
+├── SYSTEM_OVERVIEW.md            — Technical system overview
+├── SELF_REVIEW.md                — Architecture decisions & trade-offs
 ├── requirements.txt
 └── .env.example
 ```
