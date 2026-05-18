@@ -1,6 +1,5 @@
 # Self-Review: Financial News Analyst
 
-**Author**: Talgar Bayan  
 **Date**: May 2026  
 **Scope**: Architecture decisions, trade-offs, and lessons learned
 
@@ -162,7 +161,7 @@ The most significant data quality risk: the LLM uses memorised training data (20
 | Executive Summary | ✅ Complete | `EXECUTIVE_SUMMARY.md` |
 | System Overview | ✅ Complete | `SYSTEM_OVERVIEW.md` |
 | Self-Review (this doc) | ✅ Complete | `SELF_REVIEW.md` |
-| Code Repository + README | ✅ Complete | GitHub: tbayan/capstone-project |
+| Code Repository + README | ✅ Complete | capstone-project repository |
 | Test Suite (78+ tests) | ✅ Complete | `tests/` |
 | Video Demo | ⏳ Pending | To be recorded |
 

@@ -29,7 +29,7 @@ from config.settings import DEMO_PASSWORD
 
 st.set_page_config(
     page_title="Financial News Analyst",
-    page_icon="◈",
+    page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -420,43 +420,79 @@ def _auth_page() -> None:
     <style>
     [data-testid="stSidebar"] { display:none !important; }
     .stApp,[data-testid="stAppViewContainer"] { background:#0d1220 !important; }
-    .main .block-container { max-width:260px !important; padding-top:23vh !important; margin:0 auto !important; }
-    .stTextInput > div > div > input {
-        background:#192133 !important; border:1px solid #253350 !important;
-        color:#dde6f0 !important; border-radius:6px !important;
-        text-align:center !important; font-size:.85rem !important; letter-spacing:.05em !important;
+    .main .block-container {
+        max-width:360px !important;
+        padding-top:20vh !important;
+        margin:0 auto !important;
     }
-    .stTextInput > div > div > input:focus { border-color:#00c9a7 !important; box-shadow:0 0 0 2px rgba(0,201,167,.15) !important; }
+    /* compact, fixed-width input */
+    .stTextInput { width:100% !important; }
+    .stTextInput > div { width:100% !important; }
+    .stTextInput > div > div > input {
+        background:#131929 !important;
+        border:1px solid #253350 !important;
+        color:#dde6f0 !important;
+        border-radius:7px !important;
+        text-align:center !important;
+        font-size:.88rem !important;
+        letter-spacing:.04em !important;
+        padding:10px 14px !important;
+        width:100% !important;
+        box-sizing:border-box !important;
+    }
+    .stTextInput > div > div > input:focus {
+        border-color:#f97316 !important;
+        box-shadow:0 0 0 2px rgba(249,115,22,.18) !important;
+        outline:none !important;
+    }
+    .stTextInput > div > div > input::placeholder { color:#3a4a6a !important; }
     .stButton > button[kind="primary"] {
-        background:#00c9a7 !important; color:#0d1220 !important;
-        font-weight:700 !important; font-size:.67rem !important;
-        letter-spacing:.12em !important; text-transform:uppercase !important;
-        border-radius:6px !important; height:38px !important; width:100% !important;
+        background:linear-gradient(135deg,#f97316,#ea6c0a) !important;
+        color:#fff !important;
+        font-weight:700 !important; font-size:.72rem !important;
+        letter-spacing:.14em !important; text-transform:uppercase !important;
+        border:none !important; border-radius:7px !important;
+        height:40px !important; width:100% !important;
+        margin-top:4px !important;
+    }
+    .stButton > button[kind="primary"]:hover {
+        background:linear-gradient(135deg,#fb923c,#f97316) !important;
+        transform:translateY(-1px) !important;
+        box-shadow:0 4px 14px rgba(249,115,22,.35) !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
     st.markdown("""
-    <div style="text-align:center; margin-bottom:26px;">
+    <div style="text-align:center; margin-bottom:28px;">
         <div style="
             display:inline-flex; align-items:center; justify-content:center;
-            width:44px; height:44px; background:#00c9a7;
-            border-radius:10px; font-size:1.1rem; font-weight:800;
-            color:#0d1220; margin-bottom:14px;
-        ">◈</div>
-        <div style="font-size:.9rem; font-weight:700; color:#dde6f0; letter-spacing:-.01em;">
+            width:56px; height:56px;
+            background:linear-gradient(135deg,#f97316,#c2410c);
+            border-radius:14px; margin-bottom:16px;
+            box-shadow:0 6px 24px rgba(249,115,22,.35);
+        ">
+            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="18" width="6" height="10" rx="1.5" fill="white" opacity="0.9"/>
+                <rect x="12" y="10" width="6" height="18" rx="1.5" fill="white"/>
+                <rect x="22" y="3" width="6" height="25" rx="1.5" fill="white" opacity="0.85"/>
+                <polyline points="5,18 15,10 25,3" stroke="white" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.5"/>
+            </svg>
+        </div>
+        <div style="font-size:1rem; font-weight:700; color:#dde6f0; letter-spacing:-.01em; line-height:1.2;">
             Financial News Analyst
         </div>
-        <div style="font-size:.6rem; color:#3a4a6a; margin-top:4px; letter-spacing:.1em; text-transform:uppercase;">
-            Research Platform
+        <div style="font-size:.6rem; color:#3a4a6a; margin-top:5px; letter-spacing:.12em; text-transform:uppercase;">
+            Capstone Project
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    pwd = st.text_input("key", placeholder="Access key",
+    pwd = st.text_input("key", placeholder="Enter access key",
                         type="password", key="pwd_input", label_visibility="hidden")
 
-    if st.button("Enter", type="primary", use_container_width=True):
+    if st.button("Sign In", type="primary", use_container_width=True):
         if pwd == DEMO_PASSWORD:
             st.session_state["authenticated"] = True
             st.rerun()
@@ -464,8 +500,8 @@ def _auth_page() -> None:
             st.error("Invalid access key.")
 
     st.markdown("""
-    <div style="text-align:center; margin-top:14px; font-size:.58rem; color:#1e2a40; letter-spacing:.06em;">
-        LOCAL · PRIVATE · ZERO EGRESS
+    <div style="text-align:center; margin-top:16px; font-size:.57rem; color:#1e2a40; letter-spacing:.08em;">
+        LOCAL &nbsp;·&nbsp; PRIVATE &nbsp;·&nbsp; ZERO EGRESS
     </div>
     """, unsafe_allow_html=True)
 
