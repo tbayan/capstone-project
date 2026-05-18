@@ -754,13 +754,18 @@ if run_button and ticker_input and question_input:
         "Finalising …",
     ]
     _step = 0
+    _loop_start = time.time()
     while thread.is_alive():
         if _step < len(_steps):
             progress_bar.progress(min(8 + _step * 13, 90), text=_steps[_step])
             if _step == 1: data_ph.success("Market data collected")
             if _step == 3: news_ph.success("News analysed")
+            if _step == 5: anls_ph.info("Synthesising report …")
             _step += 1
-        time.sleep(3)
+        else:
+            elapsed_s = int(time.time() - _loop_start)
+            progress_bar.progress(90, text=f"Agents still working … ({elapsed_s}s elapsed)")
+        time.sleep(10)
 
     thread.join()
     progress_bar.progress(100, text="Complete.")
