@@ -1,131 +1,136 @@
 # Financial News Analyst
 
-A local, multi-agent AI system for investment research. Three specialised CrewAI agents — backed by a custom MCP server, a RAG knowledge base, and a local Ollama LLM — collaborate to produce structured investment analysis reports.
-
-**All processing is local. No API keys. No data egress.**
+> Local multi-agent investment research system.  
+> Three specialised AI agents — backed by a custom MCP server, a ChromaDB RAG knowledge base, and a local Ollama LLM — collaborate to produce structured, 7-section investment analysis reports.  
+> **No API keys. No cloud calls. No data egress.**
 
 ---
 
-## Architecture at a Glance
+## Architecture
 
 ```
-User → Streamlit UI → Security Layer → CrewAI Orchestrator
-                                              │
-                    ┌─────────────────────────┼───────────────────────────┐
-                    ▼                         ▼                           ▼
-             Data Agent                  News Agent              Analysis Agent
-          (Market data via MCP)     (News via MCP)          (RAG + Synthesis)
-                    │                         │                           │
-                    └─────────────────────────┴───────────────────────────┘
-                                              │
-                          ┌───────────────────┴───────────────────┐
-                          ▼                                       ▼
-                 Custom MCP Server                        ChromaDB RAG
-                 (FastMCP, port 8000)                    (nomic-embed-text)
-                 yfinance + RSS feeds
-                          │
-                          ▼
-                 Ollama (qwen2.5:7b)
-                 localhost:11434
+Browser
+  │
+  ▼
+Streamlit UI  (port 8501)
+  │  security layer: input validation · rate limiting · output guardrails
+  ▼
+CrewAI Orchestrator  (sequential)
+  │
+  ├─▶ [01] Data Agent ─────▶ MCP Server (port 8000)
+  │                               ├── yfinance  →  prices, fundamentals, macro
+  │                               └── RSS feeds →  financial news
+  ├─▶ [02] News Agent ─────▶ MCP Server
+  │
+  └─▶ [03] Analysis Agent ─▶ ChromaDB RAG (nomic-embed-text · 52 chunks)
+                                  └── synthesises all inputs → 7-section report
+  │
+  ▼
+Ollama (localhost:11434)
+  ├── qwen2.5:7b        — agent reasoning and synthesis
+  └── nomic-embed-text  — document and query embedding
 ```
+
+---
+
+## Technology Stack
+
+| Component | Technology |
+|-----------|-----------|
+| Agent orchestration | CrewAI (sequential process) |
+| LLM | Ollama + qwen2.5:7b (local inference) |
+| MCP server | FastMCP — custom-built, project-owned |
+| Vector store | ChromaDB (embedded, persists to disk) |
+| Embeddings | nomic-embed-text via Ollama |
+| Market data | yfinance (free, no API key) |
+| News | RSS feeds + yfinance News (free) |
+| UI | Streamlit |
+| Observability | loguru + SQLite audit trail |
+| Security | Custom validators — input sanitisation, rate limiting, PII redaction |
+| Testing | pytest — unit, integration, E2E, adversarial |
 
 ---
 
 ## Prerequisites
 
-1. **Python 3.11+**
-2. **Ollama** — [install from ollama.ai](https://ollama.ai)
-3. **GPU** — dual 4090 recommended; any NVIDIA GPU with 8GB+ VRAM works
+- **Python 3.11+**
+- **Ollama** — [ollama.ai](https://ollama.ai)
+- **GPU** — any NVIDIA with 8 GB+ VRAM (dual 4090 used in development)
 
 ---
 
 ## Setup
 
-### 1. Pull Ollama models
+### 1. Pull models
 
 ```bash
 ollama pull qwen2.5:7b
 ollama pull nomic-embed-text
 ```
 
-### 2. Create virtual environment and install dependencies
+### 2. Install dependencies
 
 ```bash
 cd financial_news_analyst
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Configure environment (optional)
+### 3. Configure (optional)
 
 ```bash
 cp .env.example .env
-# Edit .env to change demo password, model names, or MCP port
+# Override DEMO_PASSWORD, AGENT_MODEL, MCP_SERVER_PORT as needed
 ```
 
-### 4. Build the RAG knowledge base (run once)
+### 4. Build the RAG knowledge base (once)
 
 ```bash
-python rag/seed_data.py     # downloads financial data and creates seed documents
-python rag/indexer.py       # embeds documents and stores in ChromaDB
+python rag/seed_data.py    # fetches fundamentals and writes seed documents
+python rag/indexer.py      # embeds and stores in ChromaDB (~5 min first run)
 ```
-
-This takes ~5 minutes on first run (embedding 10 company summaries + reference guides + news).
 
 ---
 
-## Running the System
+## Running
 
-You need **two terminals**:
-
-### Terminal 1 — Start the MCP server
+Two terminals required:
 
 ```bash
+# Terminal 1 — MCP server
 source .venv/bin/activate
 python mcp_server/server.py
-```
+# → [MCP] Starting FinancialDataServer on port 8000 ...
 
-Expected output:
-```
-[MCP] Starting FinancialDataServer on port 8000 ...
-```
-
-### Terminal 2 — Start the Streamlit UI
-
-```bash
+# Terminal 2 — UI
 source .venv/bin/activate
 streamlit run ui/app.py
+# → http://localhost:8501
 ```
 
-Open your browser at `http://localhost:8501`. Default demo password: `capstone2026`
+Default access key: set `DEMO_PASSWORD` in `.env` (falls back to `capstone2026` if unset — change before sharing).
 
 ---
 
-## Running Tests
+## Tests
 
 ```bash
 source .venv/bin/activate
 pytest tests/ -v
 ```
 
-**Test categories**:
-
-| File | What it tests | Requires live services? |
-|------|--------------|------------------------|
+| Module | Scope | Live services needed |
+|--------|-------|---------------------|
 | `test_security.py` | Input validation, rate limiting, guardrails | No |
-| `test_mcp_server.py` | MCP tool functions (direct call) | No (uses yfinance directly) |
-| `test_rag.py` | Retrieval quality, indexer | No (needs RAG index built) |
-| `test_agents.py` | LLM behaviour, adversarial prompts | Partial (security tests: No; full agent tests: Yes) |
+| `test_mcp_server.py` | All 5 MCP tools | No |
+| `test_rag.py` | Retrieval quality, indexer | No (needs index built) |
+| `test_agents.py` | Full pipeline, adversarial prompts | Yes (MCP + Ollama) |
 
-Run only the fast tests (no live services needed):
+Fast subset (no live services):
+
 ```bash
 pytest tests/test_security.py tests/test_mcp_server.py -v
-```
-
-Run all tests including live agent tests (requires MCP server + Ollama running):
-```bash
-pytest tests/ -v
 ```
 
 ---
@@ -134,41 +139,43 @@ pytest tests/ -v
 
 ```
 financial_news_analyst/
-├── mcp_server/
-│   ├── server.py                 ← Custom FastMCP server (YOUR MCP server)
-│   └── tools/
-│       ├── market_data.py        ← yfinance wrappers
-│       └── news_fetcher.py       ← RSS financial news scraper
-├── rag/
-│   ├── seed_data.py              ← One-time knowledge base builder
-│   ├── indexer.py                ← ChromaDB indexing pipeline
-│   ├── retriever.py              ← Similarity search
-│   └── chroma_db/                ← Persisted vector store (auto-created)
 ├── agents/
-│   ├── data_agent.py             ← Agent 1: Financial Data Specialist
-│   ├── news_agent.py             ← Agent 2: Financial News Analyst
-│   ├── analysis_agent.py         ← Agent 3: Senior Investment Analyst
+│   ├── data_agent.py             — Agent 01: Financial Data Specialist
+│   ├── news_agent.py             — Agent 02: Financial News Analyst
+│   ├── analysis_agent.py         — Agent 03: Senior Investment Analyst
 │   └── tools/
-│       ├── mcp_client_tools.py   ← CrewAI tools calling MCP server via HTTP
-│       └── rag_tools.py          ← CrewAI tool for RAG retrieval
+│       ├── mcp_client_tools.py   — HTTP wrappers calling the MCP server
+│       └── rag_tools.py          — ChromaDB retrieval tool
+├── mcp_server/
+│   ├── server.py                 — Custom FastMCP server
+│   └── tools/
+│       ├── market_data.py        — yfinance wrappers (TTL-cached)
+│       └── news_fetcher.py       — RSS + yfinance news scraper
 ├── orchestrator/
-│   └── crew.py                   ← CrewAI Crew + Task chaining
+│   └── crew.py                   — CrewAI Crew + task chaining
+├── rag/
+│   ├── seed_data.py              — One-time knowledge base builder
+│   ├── indexer.py                — ChromaDB indexing pipeline
+│   ├── retriever.py              — Similarity search with score threshold
+│   └── seed_docs/                — 17 financial reference documents
 ├── observability/
-│   └── logger.py                 ← Structured logging + SQLite audit trail
+│   └── logger.py                 — loguru logs + SQLite audit trail
 ├── security/
-│   └── validators.py             ← Input validation, rate limiting, guardrails
+│   └── validators.py             — Validation, rate limiting, PII redaction, guardrails
 ├── ui/
-│   └── app.py                    ← Streamlit dashboard
+│   └── app.py                    — Streamlit dashboard
 ├── tests/
 │   ├── conftest.py
-│   ├── test_mcp_server.py        ← MCP tool tests
-│   ├── test_rag.py               ← RAG pipeline tests
-│   ├── test_agents.py            ← LLM behaviour tests (positive + adversarial)
-│   └── test_security.py          ← Security layer tests
+│   ├── test_security.py
+│   ├── test_mcp_server.py
+│   ├── test_rag.py
+│   └── test_agents.py
 ├── docs/
-│   ├── architecture_blueprint.md ← Full system design document
-│   └── executive_summary.md      ← 1-page project overview
-├── config/settings.py            ← Central configuration
+│   ├── architecture_blueprint.md
+│   ├── executive_summary.md
+│   ├── SELF_REVIEW.md
+│   └── SYSTEM_OVERVIEW.md
+├── config/settings.py
 ├── requirements.txt
 └── .env.example
 ```
@@ -179,42 +186,30 @@ financial_news_analyst/
 
 | Deliverable | Location |
 |-------------|----------|
-| Architecture Blueprint | `docs/architecture_blueprint.md` |
-| Executive Summary | `docs/executive_summary.md` |
-| Code Repository | This directory |
+| Architecture Blueprint | [docs/architecture_blueprint.md](docs/architecture_blueprint.md) |
+| Executive Summary | [docs/executive_summary.md](docs/executive_summary.md) |
+| Self-Review | [docs/SELF_REVIEW.md](docs/SELF_REVIEW.md) |
+| Code | `agents/` · `mcp_server/` · `rag/` · `orchestrator/` · `ui/` |
 | Test Suite | `tests/` |
-| Video Demo | Record separately (see below) |
+| Video Demo | See submission file |
 
 ---
 
-## Recording the Video Demo
+## Configuration
 
-Suggested flow for your 2–5 minute demo:
-
-1. Show both terminals running (MCP server + Streamlit)
-2. Log in and enter a ticker (`NVDA`) and question (`Is this a good time to invest given AI spending trends?`)
-3. Narrate each agent step as it progresses
-4. Show the final report — highlight the 7 sections
-5. In a separate terminal, run `pytest tests/test_security.py -v` and show all tests passing
-6. Show one adversarial test failing correctly (`test_prompt_injection_blocked`)
-7. Briefly explain the architecture: MCP server → agents → RAG → report
-
----
-
-## Configuration Reference
-
-All settings are in `config/settings.py` and overridable via `.env`:
+All settings live in `config/settings.py` and are overridable via `.env`:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `AGENT_MODEL` | `ollama/qwen2.5:7b` | LLM for agents (switch to `qwen2.5:14b` for better quality) |
+| `AGENT_MODEL` | `ollama/qwen2.5:7b` | LLM for agent reasoning |
 | `EMBEDDING_MODEL` | `nomic-embed-text` | Embedding model for RAG |
-| `MCP_SERVER_PORT` | `8000` | Port for the custom MCP server |
-| `DEMO_PASSWORD` | `capstone2026` | Streamlit demo access password |
-| `RATE_LIMIT_REQUESTS` | `10` | Max requests per session per hour |
+| `MCP_SERVER_PORT` | `8000` | Custom MCP server port |
+| `DEMO_PASSWORD` | `capstone2026` | UI access key |
+| `RATE_LIMIT_REQUESTS` | `10` | Max requests per session/hour |
 
 ---
 
 ## Disclaimer
 
-This system is for **educational and demonstration purposes only**. It does not constitute financial advice. All investment decisions should be made with the guidance of a qualified financial advisor. Past patterns do not guarantee future results.
+For educational and research purposes only. This system does not constitute financial advice. All outputs are AI-generated estimates based on publicly available data. Investment decisions require qualified professional guidance.
+
