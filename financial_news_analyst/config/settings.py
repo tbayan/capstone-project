@@ -9,6 +9,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# ── Telemetry opt-out ──────────────────────────────────────────────────────────
+# Disable OpenTelemetry OTLP span export (CrewAI ships with this enabled by
+# default; without a local collector it floods logs with connection errors).
+os.environ.setdefault("OTEL_SDK_DISABLED", "true")
+os.environ.setdefault("CREWAI_TELEMETRY_OPT_OUT", "1")
+
 # ── Paths ──────────────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
 CHROMA_DB_PATH = str(BASE_DIR / "rag" / "chroma_db")

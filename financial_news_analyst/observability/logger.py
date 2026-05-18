@@ -91,6 +91,12 @@ def init_db() -> None:
             )
         """)
         conn.commit()
+        # Schema migration: add 'report' column if it doesn't exist yet
+        try:
+            conn.execute("ALTER TABLE analysis_requests ADD COLUMN report TEXT")
+            conn.commit()
+        except Exception:
+            pass  # Column already exists
 
 
 # Initialise on import
@@ -131,12 +137,14 @@ def log_request_end(result: dict) -> int:
         f"report_len={report_len} token_est={token_est}"
     )
 
+    report_text = result.get("report", "")
+
     with _get_conn() as conn:
         cur = conn.execute(
             """INSERT INTO analysis_requests
-               (timestamp, ticker, question, elapsed_sec, data_len, news_len, report_len, token_est)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-            (timestamp, ticker, question, elapsed, data_len, news_len, report_len, token_est),
+               (timestamp, ticker, question, elapsed_sec, data_len, news_len, report_len, token_est, report)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (timestamp, ticker, question, elapsed, data_len, news_len, report_len, token_est, report_text),
         )
         conn.commit()
         return cur.lastrowid
@@ -197,6 +205,17 @@ def get_recent_requests(limit: int = 10) -> list[dict]:
             (limit,),
         ).fetchall()
     return [dict(row) for row in rows]
+
+
+def get_request_by_id(request_id: int) -> dict | None:
+    """Return a single analysis request including the full report text."""
+    with _get_conn() as conn:
+        row = conn.execute(
+            """SELECT id, timestamp, ticker, question, elapsed_sec, report, rating
+               FROM analysis_requests WHERE id = ?""",
+            (request_id,),
+        ).fetchone()
+    return dict(row) if row else None
 
 
 def get_metrics_summary() -> dict:

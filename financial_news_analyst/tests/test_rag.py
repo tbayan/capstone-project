@@ -130,7 +130,7 @@ class TestIndexer:
     def test_get_vectorstore_returns_chroma_instance(self):
         """get_vectorstore should return a Chroma instance."""
         from rag.indexer import get_vectorstore
-        from langchain_community.vectorstores import Chroma
+        from langchain_chroma import Chroma
         store = get_vectorstore()
         assert isinstance(store, Chroma)
 

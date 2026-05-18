@@ -15,6 +15,22 @@ import yfinance as yf
 
 from config.settings import DEFAULT_HISTORY_PERIOD
 
+# Cryptocurrency ticker normalization — yfinance requires the "-USD" suffix for crypto assets.
+# Users enter plain symbols (e.g. "BTC"); we map them to the correct yfinance format.
+_CRYPTO_MAP: dict[str, str] = {
+    "BTC": "BTC-USD", "ETH": "ETH-USD", "SOL": "SOL-USD",
+    "DOGE": "DOGE-USD", "ADA": "ADA-USD", "XRP": "XRP-USD",
+    "BNB": "BNB-USD", "DOT": "DOT-USD", "AVAX": "AVAX-USD",
+    "MATIC": "MATIC-USD", "LINK": "LINK-USD", "LTC": "LTC-USD",
+    "UNI": "UNI-USD", "ATOM": "ATOM-USD", "NEAR": "NEAR-USD",
+}
+
+
+def _normalize_symbol(symbol: str) -> str:
+    """Normalise a ticker symbol, mapping crypto abbreviations to yfinance format."""
+    s = symbol.upper().strip()
+    return _CRYPTO_MAP.get(s, s)
+
 
 def fetch_stock_data(symbol: str, period: str = DEFAULT_HISTORY_PERIOD) -> dict[str, Any]:
     """
@@ -28,7 +44,7 @@ def fetch_stock_data(symbol: str, period: str = DEFAULT_HISTORY_PERIOD) -> dict[
         Dict with keys: symbol, period, records (list of daily OHLCV dicts),
         latest_close, price_change_pct.
     """
-    symbol = symbol.upper().strip()
+    symbol = _normalize_symbol(symbol)
     try:
         ticker = yf.Ticker(symbol)
         hist = ticker.history(period=period)
@@ -75,7 +91,7 @@ def fetch_company_fundamentals(symbol: str) -> dict[str, Any]:
         Dict with company name, sector, market cap, P/E ratio, EPS,
         52-week range, dividend yield, analyst target price.
     """
-    symbol = symbol.upper().strip()
+    symbol = _normalize_symbol(symbol)
     try:
         ticker = yf.Ticker(symbol)
         info = ticker.info

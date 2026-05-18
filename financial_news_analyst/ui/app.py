@@ -22,7 +22,10 @@ from typing import Optional
 import streamlit as st
 
 from security.validators import validate_request, ValidationError, rate_limiter
-from observability.logger import log_request_start, log_request_end, save_rating, get_recent_requests, get_metrics_summary
+from observability.logger import (
+    log_request_start, log_request_end, save_rating,
+    get_recent_requests, get_request_by_id, get_metrics_summary,
+)
 from config.settings import DEMO_PASSWORD
 
 # ── Page config ────────────────────────────────────────────────────────────────
@@ -50,6 +53,9 @@ if "last_db_id" not in st.session_state:
 
 if "analysis_running" not in st.session_state:
     st.session_state["analysis_running"] = False
+
+if "viewed_history" not in st.session_state:
+    st.session_state["viewed_history"] = None  # dict or None when not browsing
 
 # ── Auth gate ──────────────────────────────────────────────────────────────────
 
@@ -125,11 +131,18 @@ with st.sidebar:
     if history:
         for h in history:
             rating_icon = "👍" if h["rating"] == 1 else ("👎" if h["rating"] == -1 else "•")
-            st.markdown(
-                f"{rating_icon} **{h['ticker']}** — _{h['question'][:40]}..._  \n"
-                f"<small>{h['timestamp']} · {h['elapsed_sec']:.1f}s</small>",
-                unsafe_allow_html=True,
-            )
+            label = f"{rating_icon} **{h['ticker']}** — {h['question'][:35]}..."
+            if st.button(label, key=f"hist_{h['id']}", use_container_width=True):
+                full = get_request_by_id(h["id"])
+                st.session_state["viewed_history"] = {
+                    "ticker": full["ticker"] if full else h["ticker"],
+                    "question": full["question"] if full else h["question"],
+                    "report": (full.get("report") or None) if full else None,
+                    "elapsed_seconds": (full.get("elapsed_sec") or 0) if full else 0,
+                    "db_id": h["id"],
+                }
+                st.rerun()
+            st.caption(f"<small>{h['timestamp']} · {h['elapsed_sec']:.1f}s</small>", unsafe_allow_html=True)
     else:
         st.caption("No analyses run yet.")
 
@@ -157,6 +170,7 @@ if run_button and ticker_input and question_input:
     st.session_state["analysis_running"] = True
     st.session_state["last_result"] = None
     st.session_state["last_db_id"] = None
+    st.session_state["viewed_history"] = None  # clear history view when new run starts
 
     log_request_start(clean_ticker, clean_question)
 
@@ -253,6 +267,27 @@ if run_button and ticker_input and question_input:
         with st.expander("View News Agent Output"):
             st.text(result.get("news_summary", "No output."))
 
+    with col3:
+        with st.expander("🔍 View RAG Sources Retrieved"):
+            rag_sources = result.get("rag_sources", [])
+            if rag_sources:
+                st.caption(
+                    f"**{len(rag_sources)} document(s)** retrieved from the financial knowledge base "
+                    f"(ChromaDB · nomic-embed-text embeddings)"
+                )
+                for i, src in enumerate(rag_sources, 1):
+                    relevance = src.get("score", 0)
+                    bar = "🟩" * int(relevance * 10) + "⬜" * (10 - int(relevance * 10))
+                    st.markdown(
+                        f"**{i}. `{src.get('source', 'unknown')}`** &nbsp; "
+                        f"_(category: {src.get('category', 'reference')})_  \n"
+                        f"Relevance: {bar} `{relevance:.2f}`"
+                    )
+                    st.caption(src.get("content", "")[:300] + ("..." if len(src.get("content", "")) > 300 else ""))
+                    st.divider()
+            else:
+                st.info("No RAG sources met the relevance threshold for this query.")
+
     st.divider()
 
     # Final report
@@ -292,13 +327,59 @@ if run_button and ticker_input and question_input:
 elif run_button and (not ticker_input or not question_input):
     st.warning("Please enter both a ticker symbol and an investment question.")
 
-# ── Show previous result if no new run ────────────────────────────────────────
+# ── History viewer ─────────────────────────────────────────────────────────────
+elif st.session_state.get("viewed_history"):
+    vh = st.session_state["viewed_history"]
+    # Back button — returns to the current analysis if one exists
+    back_label = "← Back to current analysis" if st.session_state.get("last_result") else "← Back"
+    if st.button(back_label, key="back_from_history"):
+        st.session_state["viewed_history"] = None
+        st.rerun()
+
+    st.subheader(f"📋 History: {vh['ticker']}")
+    st.markdown(f"> _{vh['question']}_")
+    st.caption(f"⏱ {vh['elapsed_seconds']:.1f}s")
+    st.divider()
+
+    if vh.get("report"):
+        st.markdown(vh["report"])
+        db_id = vh.get("db_id")
+        if db_id:
+            r_col1, r_col2, _ = st.columns([1, 1, 6])
+            if r_col1.button("👍", key="hist_up"):
+                save_rating(db_id, 1)
+                st.success("Saved!")
+            if r_col2.button("👎", key="hist_down"):
+                save_rating(db_id, -1)
+                st.info("Saved!")
+    else:
+        st.info(
+            "⚠️ Report text was not saved for this entry — it was run before report storage was enabled. "
+            "Run a new analysis to see the full stored report."
+        )
+
+# ── Show most recent analysis ─────────────────────────────────────────────────
 elif st.session_state.get("last_result") and not run_button:
     result = st.session_state["last_result"]
     st.subheader(f"📋 Last Analysis: {result.get('ticker')}")
     st.markdown(f"> _{result.get('question')}_")
     st.divider()
     st.markdown(result.get("report", ""))
+
+    # RAG sources for persisted result
+    rag_sources = result.get("rag_sources", [])
+    if rag_sources:
+        with st.expander(f"🔍 RAG Knowledge Base Sources ({len(rag_sources)} retrieved)"):
+            for i, src in enumerate(rag_sources, 1):
+                relevance = src.get("score", 0)
+                bar = "🟩" * int(relevance * 10) + "⬜" * (10 - int(relevance * 10))
+                st.markdown(
+                    f"**{i}. `{src.get('source', 'unknown')}`** &nbsp; "
+                    f"_(category: {src.get('category', 'reference')})_  \n"
+                    f"Relevance: {bar} `{relevance:.2f}`"
+                )
+                st.caption(src.get("content", "")[:300] + ("..." if len(src.get("content", "")) > 300 else ""))
+                st.divider()
 
     db_id = st.session_state.get("last_db_id")
     if db_id:

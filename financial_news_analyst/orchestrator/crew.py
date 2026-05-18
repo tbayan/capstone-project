@@ -16,6 +16,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import time
+from datetime import datetime
 from typing import Callable, Optional
 
 from crewai import Crew, Task, Process
@@ -30,17 +31,22 @@ from config.settings import FINANCIAL_DISCLAIMER_TRIGGERS, DISCLAIMER_TEXT
 
 def _make_data_task(ticker: str, question: str, agent) -> Task:
     """Task for the Data Agent: gather market data and fundamentals."""
+    today = datetime.now().strftime("%B %d, %Y")
     return Task(
         description=(
-            f"Fetch comprehensive financial data for the stock ticker: **{ticker}**\n\n"
+            f"Today's date is {today}.\n\n"
+            f"Fetch comprehensive LIVE financial data for the stock ticker: **{ticker}**\n\n"
             f"The user's investment question is: '{question}'\n\n"
             "Your task:\n"
             f"1. Use the 'Get Market Overview' tool to capture the current macro environment.\n"
             f"2. Use 'Get Stock Price Data' for {ticker} with period '3mo' to show recent performance.\n"
             f"3. Use 'Get Company Fundamentals' for {ticker} to retrieve valuation metrics.\n\n"
+            "CRITICAL DATA RULE: Use ONLY the exact numbers returned by your tool calls. "
+            "Do NOT use your training knowledge for any prices, market caps, P/E ratios, or financial figures. "
+            "If a tool returns no data, clearly state 'data unavailable from live feed' — never substitute with memorised numbers. "
             "Present the data in a clear, structured format. Highlight any unusual metrics "
             "(e.g., very high/low P/E, extreme price movements, strong or weak analyst ratings). "
-            "If a tool call fails, note it and continue with available data — do not fabricate numbers."
+            "If a tool call fails, note it and continue with available data."
         ),
         expected_output=(
             "A structured data summary containing:\n"
@@ -56,18 +62,23 @@ def _make_data_task(ticker: str, question: str, agent) -> Task:
 
 def _make_news_task(ticker: str, question: str, agent, data_task: Task) -> Task:
     """Task for the News Agent: gather and analyse news sentiment."""
+    today = datetime.now().strftime("%B %d, %Y")
     return Task(
         description=(
-            f"Research recent financial news for **{ticker}** to support the investment question: "
+            f"Today's date is {today}.\n\n"
+            f"Research LIVE, CURRENT financial news for **{ticker}** to support the investment question: "
             f"'{question}'\n\n"
             "Your task:\n"
             f"1. Use 'Get Ticker News' for {ticker} to fetch ticker-specific news.\n"
             f"2. Use 'Search Financial News' with a broader query like '{ticker} earnings outlook' "
             "to catch additional coverage.\n"
             "3. Synthesise the news into a sentiment assessment and key takeaways.\n\n"
+            "CRITICAL DATA RULE: Report ONLY news headlines and dates returned by your tools. "
+            "Do NOT recall, invent, or paraphrase news stories from training data. "
+            "If the tools return no news, state 'no recent news found via live feeds'. "
             "Focus on: earnings reports, analyst upgrades/downgrades, product launches, "
             "regulatory news, macroeconomic events that affect this stock, and any pending catalysts. "
-            "Be precise about dates — clearly note how recent each piece of news is. "
+            "Be precise about dates — note exactly when each story was published. "
             "Do NOT invent or fabricate news stories."
         ),
         expected_output=(
@@ -85,20 +96,28 @@ def _make_news_task(ticker: str, question: str, agent, data_task: Task) -> Task:
 
 def _make_analysis_task(ticker: str, question: str, agent, data_task: Task, news_task: Task) -> Task:
     """Task for the Analysis Agent: synthesise and produce the final report."""
+    today = datetime.now().strftime("%B %d, %Y")
     return Task(
         description=(
+            f"Today's date is {today}.\n\n"
             f"Produce a comprehensive investment analysis report for **{ticker}** "
             f"addressing the user's question: '{question}'\n\n"
             "You have access to:\n"
-            "- Market data and fundamentals from the Data Agent (in context)\n"
-            "- News sentiment and recent events from the News Agent (in context)\n"
-            "- The financial knowledge base via the 'Retrieve Historical Financial Patterns' tool\n\n"
+            "- Market data and fundamentals from the Data Agent (in context) — this is LIVE data\n"
+            "- News sentiment and recent events from the News Agent (in context) — this is LIVE news\n"
+            "- The financial knowledge base via the 'Retrieve Historical Financial Patterns' tool — historical frameworks ONLY\n\n"
             "Your task:\n"
-            "1. Use 'Retrieve Historical Financial Patterns' to find relevant frameworks "
-            f"(e.g., search for '{ticker} valuation P/E sector comparison' and 'investment risk assessment').\n"
+            "1. Use 'Retrieve Historical Financial Patterns' to find relevant analytical frameworks "
+            f"(e.g., search for '{ticker} valuation sector comparison' and 'investment risk assessment').\n"
             "2. Synthesise all three information sources into the structured report below.\n"
             "3. Maintain intellectual honesty — if the data is mixed or uncertain, say so.\n"
             "4. Always end with the required disclaimer.\n\n"
+            "CRITICAL GROUNDING RULE: Your report must be based ENTIRELY on:\n"
+            "  (a) The exact data in your context from the Data Agent and News Agent\n"
+            "  (b) What the RAG tool returns (label these as 'historical frameworks', not current facts)\n"
+            "NEVER use your training knowledge for current prices, market caps, P/E ratios, "
+            "analyst ratings, or news stories. If the agents report data unavailable, say so. "
+            "Do NOT substitute memorised figures for missing live data.\n\n"
             "IMPORTANT: This is an AI-generated analysis for educational purposes only."
         ),
         expected_output=(
@@ -210,11 +229,20 @@ def run_analysis(
 
     elapsed = round(time.time() - start_time, 2)
 
+    # Capture which RAG documents were retrieved for UI source attribution
+    try:
+        from rag.retriever import retrieve_with_metadata
+        rag_query = f"{ticker} {question[:80]}"
+        rag_sources = retrieve_with_metadata(rag_query, k=5)
+    except Exception:
+        rag_sources = []
+
     return {
         "ticker": ticker.upper(),
         "question": question,
         "report": final_report,
         "data_summary": data_output,
         "news_summary": news_output,
+        "rag_sources": rag_sources,
         "elapsed_seconds": elapsed,
     }

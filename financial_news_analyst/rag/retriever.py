@@ -12,7 +12,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from typing import Optional
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 
 from config.settings import RAG_TOP_K, RAG_SCORE_THRESHOLD
 from rag.indexer import get_vectorstore
@@ -58,7 +58,10 @@ def retrieve(query: str, k: int = RAG_TOP_K, score_threshold: float = RAG_SCORE_
         )
 
     parts: list[str] = [
-        f"[Retrieved {len(filtered)} relevant document(s) from knowledge base]\n"
+        f"[HISTORICAL REFERENCE FRAMEWORKS — {len(filtered)} document(s) retrieved. "
+        f"These are analytical patterns and historical context ONLY. "
+        f"Do NOT treat these as current prices, live news, or recent financial figures. "
+        f"For current data, rely exclusively on the context from the Data Agent and News Agent.]\n"
     ]
     for i, (doc, score) in enumerate(filtered, 1):
         source = doc.metadata.get("filename", "unknown")
