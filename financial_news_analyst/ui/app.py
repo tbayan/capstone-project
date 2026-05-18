@@ -23,123 +23,192 @@ from config.settings import DEMO_PASSWORD
 # ── Page config ────────────────────────────────────────────────────────────────
 
 st.set_page_config(
-    page_title="FNA · Financial News Analyst",
+    page_title="Financial News Analyst",
     page_icon="◈",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # ── Global CSS theme ───────────────────────────────────────────────────────────
+# Professional financial portal palette — white main area, deep navy sidebar
 
 _CSS = """
 <style>
 /* ── Palette ── */
 :root {
-    --bg:       #07091a;
-    --surface:  #0c1424;
-    --card:     #0f1a2e;
-    --border:   #1a304f;
-    --accent:   #0ea5e9;
-    --purple:   #818cf8;
-    --text:     #cbd5e1;
-    --dim:      #475569;
-    --muted:    #1e3a5f;
-    --ok:       #22c55e;
-    --err:      #f87171;
-    --warn:     #fbbf24;
-    --mono:     'Fira Code', 'Cascadia Code', 'SF Mono', monospace;
+    --bg:        #f0f4f8;
+    --surface:   #ffffff;
+    --card:      #ffffff;
+    --border:    #dde5ef;
+    --border2:   #c8d5e3;
+    --nav:       #0b2340;
+    --nav2:      #0f2d52;
+    --accent:    #1561c0;
+    --accent-lt: #1a72d9;
+    --text:      #1a2738;
+    --dim:       #5a6a7e;
+    --muted:     #8fa0b3;
+    --ok:        #1a7a44;
+    --err:       #b91c1c;
+    --warn:      #92400e;
+    --mono:      'Fira Code', 'Cascadia Code', 'SF Mono', monospace;
 }
 
-/* ── App background + subtle star field ── */
+/* ── App background ── */
 .stApp, [data-testid="stAppViewContainer"] {
     background-color: var(--bg) !important;
-    background-image:
-        radial-gradient(ellipse at 18% 28%, rgba(14,165,233,0.055) 0%, transparent 44%),
-        radial-gradient(ellipse at 80% 70%, rgba(129,140,248,0.045) 0%, transparent 44%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Ccircle cx='14' cy='22' r='0.8' fill='%23fff' fill-opacity='.2'/%3E%3Ccircle cx='94' cy='12' r='0.5' fill='%237dd3fc' fill-opacity='.36'/%3E%3Ccircle cx='50' cy='102' r='0.9' fill='%23fff' fill-opacity='.15'/%3E%3Ccircle cx='138' cy='58' r='0.6' fill='%23fff' fill-opacity='.26'/%3E%3Ccircle cx='72' cy='44' r='0.5' fill='%237dd3fc' fill-opacity='.28'/%3E%3Ccircle cx='26' cy='80' r='0.4' fill='%23fff' fill-opacity='.13'/%3E%3Ccircle cx='116' cy='130' r='0.7' fill='%237dd3fc' fill-opacity='.2'/%3E%3Ccircle cx='7' cy='142' r='0.5' fill='%23fff' fill-opacity='.17'/%3E%3Ccircle cx='158' cy='30' r='0.6' fill='%23fff' fill-opacity='.22'/%3E%3Ccircle cx='62' cy='160' r='0.4' fill='%237dd3fc' fill-opacity='.18'/%3E%3Ccircle cx='170' cy='92' r='0.5' fill='%23fff' fill-opacity='.19'/%3E%3Ccircle cx='40' cy='168' r='0.6' fill='%23fff' fill-opacity='.14'/%3E%3Ccircle cx='148' cy='148' r='0.4' fill='%237dd3fc' fill-opacity='.15'/%3E%3C/svg%3E") !important;
 }
 
-/* ── Sidebar ── */
+/* ── Sidebar — deep navy ── */
 [data-testid="stSidebar"] {
-    background-color: var(--surface) !important;
-    border-right: 1px solid var(--border) !important;
+    background-color: var(--nav) !important;
+    border-right: none !important;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.12) !important;
 }
 [data-testid="stSidebar"] .stMarkdown p,
 [data-testid="stSidebar"] label,
 [data-testid="stSidebar"] span:not([data-testid]),
-[data-testid="stSidebar"] small { color: var(--text) !important; }
+[data-testid="stSidebar"] small,
+[data-testid="stSidebar"] .stCaption { color: rgba(196,218,238,0.85) !important; }
 
-/* ── Main block ── */
-.main .block-container {
-    padding-top: 1.75rem !important;
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
-    max-width: 1480px !important;
+/* Sidebar inputs */
+[data-testid="stSidebar"] .stTextInput > div > div > input,
+[data-testid="stSidebar"] .stTextArea > div > div > textarea {
+    background-color: rgba(255,255,255,0.07) !important;
+    border: 1px solid rgba(255,255,255,0.18) !important;
+    color: #ddeef8 !important;
+    caret-color: #5ab4f0 !important;
 }
-
-/* ── Typography ── */
-h1 { font-size: 1.3rem !important; font-weight: 700 !important; color: var(--text) !important; letter-spacing: -.015em !important; margin-bottom: .25rem !important; }
-h2 { font-size: 1.05rem !important; font-weight: 600 !important; color: var(--text) !important; }
-h3 { font-size: .92rem !important; font-weight: 600 !important; color: var(--text) !important; }
-h4 { font-size: .85rem !important; font-weight: 600 !important; color: var(--dim) !important; text-transform: uppercase; letter-spacing: .07em !important; }
-p, li { color: var(--text) !important; line-height: 1.72 !important; }
-
-/* ── Inputs ── */
-.stTextInput > div > div > input,
-.stTextArea > div > div > textarea {
-    background-color: var(--card) !important;
-    border: 1px solid var(--border) !important;
-    color: var(--text) !important;
-    border-radius: 3px !important;
-    font-size: .875rem !important;
-    caret-color: var(--accent) !important;
+[data-testid="stSidebar"] .stTextInput > div > div > input::placeholder,
+[data-testid="stSidebar"] .stTextArea > div > div > textarea::placeholder {
+    color: rgba(150,185,215,0.5) !important;
 }
-.stTextInput > div > div > input:focus,
-.stTextArea > div > div > textarea:focus {
-    border-color: var(--accent) !important;
-    box-shadow: 0 0 0 2px rgba(14,165,233,.12) !important;
-    outline: none !important;
+[data-testid="stSidebar"] .stTextInput > div > div > input:focus,
+[data-testid="stSidebar"] .stTextArea > div > div > textarea:focus {
+    border-color: #4a9ede !important;
+    box-shadow: 0 0 0 2px rgba(74,158,222,0.2) !important;
 }
-.stTextInput > label, .stTextArea > label {
-    color: var(--dim) !important;
-    font-size: .7rem !important;
+[data-testid="stSidebar"] .stTextInput > label,
+[data-testid="stSidebar"] .stTextArea > label {
+    color: rgba(160,190,220,0.7) !important;
+    font-size: .68rem !important;
     font-family: var(--mono) !important;
     text-transform: uppercase !important;
     letter-spacing: .09em !important;
 }
 
-/* ── Buttons ── */
+/* Sidebar buttons */
+[data-testid="stSidebar"] .stButton > button[kind="primary"] {
+    background-color: #1e72d4 !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+[data-testid="stSidebar"] .stButton > button[kind="primary"]:hover {
+    background-color: #2a86e8 !important;
+}
+[data-testid="stSidebar"] .stButton > button:not([kind="primary"]) {
+    border: 1px solid rgba(255,255,255,0.18) !important;
+    color: rgba(190,215,238,0.8) !important;
+    background: transparent !important;
+    font-size: .75rem !important;
+    text-align: left !important;
+}
+[data-testid="stSidebar"] .stButton > button:not([kind="primary"]):hover {
+    border-color: #4a9ede !important;
+    color: #7ec8f0 !important;
+    background: rgba(74,158,222,0.1) !important;
+}
+
+/* Sidebar metrics */
+[data-testid="stSidebar"] [data-testid="stMetric"] {
+    background: rgba(255,255,255,0.06) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    box-shadow: none !important;
+}
+[data-testid="stSidebar"] [data-testid="stMetricLabel"] {
+    color: rgba(155,190,220,0.75) !important;
+}
+[data-testid="stSidebar"] [data-testid="stMetricValue"] { color: #ddeef8 !important; }
+
+/* Sidebar divider */
+[data-testid="stSidebar"] hr {
+    border-color: rgba(255,255,255,0.1) !important;
+    opacity: 1 !important;
+}
+
+/* ── Main block ── */
+.main .block-container {
+    padding-top: 1.75rem !important;
+    padding-left: 2.25rem !important;
+    padding-right: 2.25rem !important;
+    max-width: 1440px !important;
+}
+
+/* ── Typography ── */
+h1 { font-size: 1.25rem !important; font-weight: 700 !important; color: var(--text) !important; letter-spacing: -.01em !important; }
+h2 { font-size: 1.05rem !important; font-weight: 600 !important; color: var(--text) !important; }
+h3 { font-size: .95rem !important; font-weight: 600 !important; color: var(--text) !important; }
+h4 { font-size: .78rem !important; font-weight: 600 !important; color: var(--dim) !important; text-transform: uppercase !important; letter-spacing: .08em !important; }
+p, li { color: var(--text) !important; line-height: 1.72 !important; }
+
+/* ── Main area inputs ── */
+.stTextInput > div > div > input,
+.stTextArea > div > div > textarea {
+    background-color: var(--surface) !important;
+    border: 1.5px solid var(--border) !important;
+    color: var(--text) !important;
+    border-radius: 4px !important;
+    font-size: .875rem !important;
+}
+.stTextInput > div > div > input:focus,
+.stTextArea > div > div > textarea:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(21,97,192,0.1) !important;
+    outline: none !important;
+}
+.stTextInput > label, .stTextArea > label {
+    color: var(--dim) !important;
+    font-size: .68rem !important;
+    font-family: var(--mono) !important;
+    text-transform: uppercase !important;
+    letter-spacing: .09em !important;
+}
+
+/* ── Main area primary button ── */
 .stButton > button[kind="primary"] {
     background-color: var(--accent) !important;
-    color: #040810 !important;
+    color: #ffffff !important;
     border: none !important;
-    font-weight: 700 !important;
-    letter-spacing: .1em !important;
+    font-weight: 600 !important;
+    letter-spacing: .08em !important;
     text-transform: uppercase !important;
     font-size: .7rem !important;
-    border-radius: 3px !important;
+    border-radius: 4px !important;
     height: 38px !important;
 }
-.stButton > button[kind="primary"]:hover { background-color: #38bdf8 !important; }
+.stButton > button[kind="primary"]:hover { background-color: var(--accent-lt) !important; }
+
+/* ── Main area secondary button ── */
 .stButton > button:not([kind="primary"]) {
     background: transparent !important;
-    border: 1px solid var(--border) !important;
+    border: 1.5px solid var(--border2) !important;
     color: var(--dim) !important;
-    border-radius: 3px !important;
+    border-radius: 4px !important;
     font-size: .78rem !important;
-    transition: border-color .15s, color .15s !important;
 }
 .stButton > button:not([kind="primary"]):hover {
     border-color: var(--accent) !important;
     color: var(--accent) !important;
+    background: rgba(21,97,192,0.04) !important;
 }
 
-/* ── Metrics ── */
+/* ── Main area metrics ── */
 [data-testid="stMetric"] {
-    background: var(--card) !important;
+    background: var(--surface) !important;
     border: 1px solid var(--border) !important;
-    border-radius: 4px !important;
+    border-radius: 6px !important;
     padding: 10px 14px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
 }
 [data-testid="stMetricLabel"] {
     color: var(--dim) !important;
@@ -155,63 +224,59 @@ p, li { color: var(--text) !important; line-height: 1.72 !important; }
 }
 
 /* ── Divider ── */
-hr { border-color: var(--border) !important; opacity: .55 !important; margin: 14px 0 !important; }
+hr { border-color: var(--border) !important; opacity: 1 !important; margin: 14px 0 !important; }
 
-/* ── Alert boxes ── */
-.stAlert { background-color: var(--card) !important; border-radius: 4px !important; border-left-width: 3px !important; }
-div[data-baseweb="notification"] { background-color: var(--card) !important; }
+/* ── Alerts ── */
+.stAlert { border-radius: 4px !important; }
 
 /* ── Expander ── */
 details {
     border: 1px solid var(--border) !important;
-    border-radius: 4px !important;
-    background: var(--card) !important;
+    border-radius: 6px !important;
+    background: var(--surface) !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
 }
 details summary {
     color: var(--dim) !important;
-    font-size: .78rem !important;
-    font-family: var(--mono) !important;
-    padding: 8px 12px !important;
+    font-size: .8rem !important;
+    padding: 8px 14px !important;
 }
 
 /* ── Captions ── */
-.stCaption { color: var(--dim) !important; font-size: .7rem !important; font-family: var(--mono) !important; }
+.stCaption { color: var(--dim) !important; font-size: .72rem !important; font-family: var(--mono) !important; }
 
 /* ── Progress bar ── */
 [data-testid="stProgressBar"] > div > div { background-color: var(--accent) !important; }
-[data-testid="stProgressBar"] { background-color: var(--card) !important; border-radius: 2px !important; }
+[data-testid="stProgressBar"] { background-color: var(--border) !important; border-radius: 2px !important; }
 
 /* ── Code ── */
 code {
-    background: rgba(14,165,233,.1) !important;
+    background: rgba(21,97,192,0.08) !important;
     color: var(--accent) !important;
-    border-radius: 2px !important;
+    border-radius: 3px !important;
     padding: 1px 5px !important;
     font-family: var(--mono) !important;
     font-size: .82em !important;
 }
 
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
 /* ── Download button ── */
 [data-testid="stDownloadButton"] > button {
     background: transparent !important;
-    border: 1px solid var(--muted) !important;
+    border: 1px solid var(--border2) !important;
     color: var(--dim) !important;
-    font-size: .7rem !important;
-    letter-spacing: .07em !important;
-    border-radius: 3px !important;
+    font-size: .72rem !important;
+    border-radius: 4px !important;
 }
 [data-testid="stDownloadButton"] > button:hover {
     border-color: var(--accent) !important;
     color: var(--accent) !important;
+    background: rgba(21,97,192,0.04) !important;
 }
-
-/* ── Auth page overrides ── */
-.auth-hide-sidebar [data-testid="stSidebar"] { display: none !important; }
 </style>
 """
 st.markdown(_CSS, unsafe_allow_html=True)
@@ -232,51 +297,49 @@ for _k, _v in [
 # ── Auth gate ──────────────────────────────────────────────────────────────────
 
 def _auth_page() -> None:
-    # Hide sidebar + center block for the login screen
     st.markdown("""
     <style>
     [data-testid="stSidebar"] { display: none !important; }
+    .stApp, [data-testid="stAppViewContainer"] { background-color: #f0f4f8 !important; }
     .main .block-container {
-        max-width: 400px !important;
-        padding-top: 18vh !important;
+        max-width: 320px !important;
+        padding-top: 22vh !important;
         margin: 0 auto !important;
     }
+    /* Login card */
+    .login-card {
+        background: #ffffff;
+        border: 1px solid #dde5ef;
+        border-top: 3px solid #1561c0;
+        border-radius: 6px;
+        padding: 32px 28px 28px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
     </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div style="text-align:center; padding-bottom:28px;">
-        <div style="
-            font-family:'Fira Code','SF Mono',monospace;
-            font-size:.6rem;
-            color:#0ea5e9;
-            letter-spacing:.28em;
-            text-transform:uppercase;
-            opacity:.75;
-            margin-bottom:10px;
-        ">Multi-Agent · RAG · MCP</div>
-        <div style="
-            font-size:2.8rem;
-            font-weight:800;
-            color:#e2e8f0;
-            letter-spacing:-.03em;
-            line-height:1;
-            font-family:'Inter',-apple-system,sans-serif;
-        ">FNA</div>
-        <div style="
-            font-size:.78rem;
-            color:#475569;
-            margin-top:6px;
-            letter-spacing:.06em;
-        ">Financial News Analyst</div>
+    <div class="login-card">
+        <div style="margin-bottom:22px;">
+            <div style="
+                font-size:1.5rem;
+                font-weight:800;
+                color:#0b2340;
+                letter-spacing:-.01em;
+                line-height:1.1;
+            ">Financial News<br>Analyst</div>
+            <div style="
+                font-size:.72rem;
+                color:#8fa0b3;
+                margin-top:5px;
+                letter-spacing:.03em;
+            ">Investment Research Platform</div>
+        </div>
+        <div style="border-top:1px solid #dde5ef; margin-bottom:20px;"></div>
     </div>
-    <div style="border-top:1px solid #1a304f; margin-bottom:22px;"></div>
     """, unsafe_allow_html=True)
 
-    pwd = st.text_input("Access key", placeholder="Enter access key", type="password",
-                        key="pwd_input", label_visibility="hidden")
+    pwd = st.text_input("Access key", placeholder="Enter access key",
+                        type="password", key="pwd_input", label_visibility="hidden")
 
-    if st.button("ENTER", type="primary", use_container_width=True):
+    if st.button("Sign In", type="primary", use_container_width=True):
         if pwd == DEMO_PASSWORD:
             st.session_state["authenticated"] = True
             st.rerun()
@@ -284,14 +347,9 @@ def _auth_page() -> None:
             st.error("Invalid access key.")
 
     st.markdown("""
-    <div style="
-        text-align:center;
-        margin-top:24px;
-        font-family:'Fira Code',monospace;
-        font-size:.58rem;
-        color:#1a304f;
-        letter-spacing:.1em;
-    ">local inference · zero data egress</div>
+    <div style="text-align:center; margin-top:16px; font-size:.65rem; color:#c8d5e3;">
+        Secure · Local Inference
+    </div>
     """, unsafe_allow_html=True)
 
 
@@ -304,23 +362,22 @@ if not st.session_state["authenticated"]:
 
 with st.sidebar:
     st.markdown("""
-    <div style="padding:4px 0 18px 0;">
+    <div style="padding:6px 0 16px 0;">
         <div style="
-            font-family:'Fira Code',monospace;
             font-size:.58rem;
-            color:#0ea5e9;
-            letter-spacing:.22em;
+            color:rgba(100,160,210,0.55);
+            letter-spacing:.2em;
             text-transform:uppercase;
-            opacity:.7;
-            margin-bottom:4px;
-        ">Financial Intelligence</div>
+            font-family:'Fira Code',monospace;
+            margin-bottom:5px;
+        ">◈ RESEARCH PLATFORM</div>
         <div style="
-            font-size:1.35rem;
-            font-weight:800;
-            color:#e2e8f0;
-            letter-spacing:-.02em;
-            line-height:1;
-        ">FNA</div>
+            font-size:1.05rem;
+            font-weight:700;
+            color:#ddeef8;
+            letter-spacing:-.01em;
+            line-height:1.25;
+        ">Financial News<br>Analyst</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -400,27 +457,36 @@ with st.sidebar:
     else:
         st.caption("No analyses yet.")
 
+    st.divider()
+    # ── Logout ──
+    if st.button("Log Out", key="logout_btn", use_container_width=True):
+        st.session_state["authenticated"] = False
+        st.rerun()
+
 
 # ── Main content ───────────────────────────────────────────────────────────────
 
 st.markdown("""
 <div style="
     display:flex;
-    align-items:baseline;
-    gap:14px;
-    padding-bottom:18px;
-    border-bottom:1px solid #1a304f;
-    margin-bottom:20px;
+    align-items:center;
+    gap:10px;
+    padding-bottom:16px;
+    border-bottom:2px solid #dde5ef;
+    margin-bottom:22px;
 ">
-    <span style="font-size:1.15rem; font-weight:700; color:#e2e8f0; letter-spacing:-.01em;">
-        Financial News Analyst
-    </span>
+    <div style="
+        width:4px;
+        height:22px;
+        background:#1561c0;
+        border-radius:2px;
+    "></div>
     <span style="
-        font-family:'Fira Code',monospace;
-        font-size:.6rem;
-        color:#475569;
-        letter-spacing:.08em;
-    ">v1.0 · local inference · zero egress</span>
+        font-size:1.15rem;
+        font-weight:700;
+        color:#1a2738;
+        letter-spacing:-.01em;
+    ">Financial News Analyst</span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -621,27 +687,29 @@ elif st.session_state.get("last_result") and not run_button:
         if rc1.button("▲", key="re_up"):
             save_rating(db_id, 1)
             st.success("Saved.")
-        if r_col2.button("👎", key="re_down"):
+        if rc2.button("▼", key="re_down"):
             save_rating(db_id, -1)
-            st.info("Saved!")
+            st.info("Saved.")
 
 else:
     # Welcome state
-    st.info(
-        "👈 Enter a ticker and question in the sidebar, then click **Run Analysis** to start."
-    )
     st.markdown("""
-    ### How it works
-
-    | Step | Agent | What it does |
-    |------|-------|-------------|
-    | 1 | **Data Agent** | Calls your custom MCP server to fetch live stock prices and company fundamentals via yfinance |
-    | 2 | **News Agent** | Calls your custom MCP server to scrape financial news from free RSS feeds |
-    | 3 | **Analysis Agent** | Retrieves relevant patterns from the RAG knowledge base, then synthesises all inputs into a structured investment report |
-
-    All three agents run locally on your machine using **Ollama (qwen2.5:7b)**.
-    No API keys required. No data leaves your computer.
-    """)
-
-    st.divider()
-    st.caption("⚠️ This system is for educational purposes only. Not financial advice.")
+    <div style="
+        background:#ffffff;
+        border:1px solid #dde5ef;
+        border-left:3px solid #1561c0;
+        border-radius:6px;
+        padding:20px 24px;
+        margin-top:8px;
+    ">
+        <div style="font-size:.95rem; font-weight:600; color:#1a2738; margin-bottom:8px;">
+            Ready for analysis
+        </div>
+        <div style="font-size:.82rem; color:#5a6a7e; line-height:1.7;">
+            Enter a <strong>ticker symbol</strong> and your <strong>research question</strong>
+            in the sidebar panel, then click <strong>Run Analysis</strong>.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("")
+    st.caption("For educational purposes only. Not financial advice.")
