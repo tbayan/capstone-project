@@ -558,11 +558,20 @@ with st.sidebar:
     <div style="padding:10px 0 18px;">
         <div style="display:inline-flex; align-items:center; gap:9px;">
             <div style="
-                width:30px; height:30px; background:#00c9a7;
+                width:30px; height:30px;
+                background:linear-gradient(135deg,#f97316,#c2410c);
                 border-radius:7px; display:flex; align-items:center;
-                justify-content:center; font-size:.85rem; font-weight:800;
-                color:#0d1220; flex-shrink:0;
-            ">◈</div>
+                justify-content:center; flex-shrink:0;
+                box-shadow:0 3px 10px rgba(249,115,22,.35);
+            ">
+                <svg width="16" height="16" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2"  y="18" width="6" height="10" rx="1.5" fill="white" opacity=".9"/>
+                    <rect x="12" y="10" width="6" height="18" rx="1.5" fill="white"/>
+                    <rect x="22" y="3"  width="6" height="25" rx="1.5" fill="white" opacity=".85"/>
+                    <polyline points="5,18 15,10 25,3" stroke="white" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".5"/>
+                </svg>
+            </div>
             <div>
                 <div style="font-size:.88rem; font-weight:700; color:#dde6f0; line-height:1.2;">FNA</div>
                 <div style="font-size:.55rem; color:#3a4a6a; letter-spacing:.12em; text-transform:uppercase;">
