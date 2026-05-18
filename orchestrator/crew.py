@@ -213,28 +213,35 @@ def run_analysis(
     # Execute
     crew_result = crew.kickoff(inputs={"ticker": ticker, "question": question})
 
-    # Extract individual task outputs
-    data_output = data_task.output.raw if data_task.output else "Data collection failed."
-    news_output = news_task.output.raw if news_task.output else "News collection failed."
-    final_report = crew_result.raw if hasattr(crew_result, "raw") else str(crew_result)
+    # Extract individual task outputs safely
+    def _raw(task_obj) -> str:
+        if task_obj and task_obj.output:
+            return task_obj.output.raw or ""
+        return ""
+
+    data_output  = _raw(data_task)  or "Data collection failed."
+    news_output  = _raw(news_task)  or "News collection failed."
+    final_report = (crew_result.raw if hasattr(crew_result, "raw") and crew_result.raw
+                    else str(crew_result)) or "Analysis generation failed."
 
     # Apply security guardrails to final output
     final_report = _apply_guardrails(final_report)
 
     # Fire step callbacks if provided (for UI progress display)
     if step_callback:
-        step_callback("Data Agent", data_output)
-        step_callback("News Agent", news_output)
+        step_callback("Data Agent",     data_output)
+        step_callback("News Agent",     news_output)
         step_callback("Analysis Agent", final_report)
 
     elapsed = round(time.time() - start_time, 2)
 
-    # Capture which RAG documents were retrieved for UI source attribution
+    # Retrieve RAG sources for UI attribution (reuses the same retriever the analysis agent used)
     try:
         from rag.retriever import retrieve_with_metadata
-        rag_query = f"{ticker} {question[:80]}"
-        rag_sources = retrieve_with_metadata(rag_query, k=5)
-    except Exception:
+        rag_sources = retrieve_with_metadata(f"{ticker} {question[:80]}", k=5)
+    except Exception as exc:
+        from observability.logger import log_error
+        log_error("rag_attribution", str(exc), type(exc).__name__)
         rag_sources = []
 
     return {

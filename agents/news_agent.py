@@ -33,8 +33,10 @@ def create_news_agent() -> Agent:
     llm = LLM(
         model=AGENT_MODEL,
         base_url=OLLAMA_BASE_URL,
-        temperature=0.3,   # slightly higher for nuanced interpretation
+        temperature=0.3,
+        max_tokens=1100,       # sentiment + 3-5 headlines + catalysts fits in ~1k tokens
         timeout=1800,
+        extra_body={"options": {"num_ctx": 6144}},  # news content + data context fits in 6k
     )
 
     return Agent(
@@ -57,5 +59,5 @@ def create_news_agent() -> Agent:
         llm=llm,
         verbose=True,
         allow_delegation=False,
-        max_iter=3,
+        max_iter=2,   # exactly 2 tool calls (ticker news + search) → 2 iterations sufficient
     )

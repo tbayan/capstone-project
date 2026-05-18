@@ -419,91 +419,132 @@ def _auth_page() -> None:
     st.markdown("""
     <style>
     [data-testid="stSidebar"] { display:none !important; }
-    .stApp,[data-testid="stAppViewContainer"] { background:#0d1220 !important; }
-    .main .block-container {
-        max-width:360px !important;
-        padding-top:20vh !important;
-        margin:0 auto !important;
+    [data-testid="stHeader"]  { background:transparent !important; }
+
+    /* ── Galaxy pixel-art background ────────────────────────────────────────── */
+    /* 5 star layers on prime-number grids (no visible repeating grid lines)    */
+    /* + 3 nebula glow blobs in purple / deep-blue / teal                       */
+    .stApp, [data-testid="stAppViewContainer"] {
+        background-color: #040812 !important;
+        background-image:
+            radial-gradient(circle, rgba(255,255,255,.92) 1px, transparent 1px),
+            radial-gradient(circle, rgba(255,255,255,.55) 1px, transparent 1px),
+            radial-gradient(circle, rgba(255,230,150,.78) 1px, transparent 1px),
+            radial-gradient(circle, rgba(185,145,255,.68) 1px, transparent 1px),
+            radial-gradient(circle, rgba(0,201,167,.58)   1px, transparent 1px),
+            radial-gradient(ellipse 300px 220px at 14% 56%, rgba(88,28,160,.28) 0%, transparent 65%),
+            radial-gradient(ellipse 220px 340px at 83% 21%, rgba(22,52,165,.22) 0%, transparent 65%),
+            radial-gradient(ellipse 340px 150px at 57% 87%, rgba(0,88,72,.15)   0%, transparent 65%) !important;
+        background-size:
+            53px 53px, 79px 67px, 97px 83px, 131px 71px, 61px 109px,
+            100% 100%, 100% 100%, 100% 100% !important;
+        background-position:
+            7px 11px, 38px 52px, 67px 24px, 14px 81px, 44px 37px,
+            0 0, 0 0, 0 0 !important;
+        background-attachment: fixed !important;
     }
-    /* compact, fixed-width input */
-    .stTextInput { width:100% !important; }
-    .stTextInput > div { width:100% !important; }
+
+    /* Reset block container so column layout controls width */
+    .main .block-container {
+        max-width: 100% !important;
+        padding-top: 10vh !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    /* ── Login card inputs ───────────────────────────────────────────────────── */
+    .stTextInput > label { display:none !important; }
     .stTextInput > div > div > input {
-        background:#131929 !important;
-        border:1px solid #253350 !important;
-        color:#dde6f0 !important;
-        border-radius:7px !important;
-        text-align:center !important;
-        font-size:.88rem !important;
-        letter-spacing:.04em !important;
-        padding:10px 14px !important;
-        width:100% !important;
-        box-sizing:border-box !important;
+        background: #0b1422 !important;
+        border: 1px solid #243048 !important;
+        color: #dde6f0 !important;
+        border-radius: 8px !important;
+        text-align: center !important;
+        font-size: .85rem !important;
+        letter-spacing: .04em !important;
+        padding: 9px 12px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
     .stTextInput > div > div > input:focus {
-        border-color:#f97316 !important;
-        box-shadow:0 0 0 2px rgba(249,115,22,.18) !important;
-        outline:none !important;
+        border-color: #f97316 !important;
+        box-shadow: 0 0 0 2px rgba(249,115,22,.18) !important;
+        outline: none !important;
     }
-    .stTextInput > div > div > input::placeholder { color:#3a4a6a !important; }
+    .stTextInput > div > div > input::placeholder { color: #2a3a58 !important; }
+
+    /* ── Sign In button ──────────────────────────────────────────────────────── */
     .stButton > button[kind="primary"] {
-        background:linear-gradient(135deg,#f97316,#ea6c0a) !important;
-        color:#fff !important;
-        font-weight:700 !important; font-size:.72rem !important;
-        letter-spacing:.14em !important; text-transform:uppercase !important;
-        border:none !important; border-radius:7px !important;
-        height:40px !important; width:100% !important;
-        margin-top:4px !important;
+        background: linear-gradient(135deg,#f97316,#ea6c0a) !important;
+        color: #fff !important; font-weight: 700 !important;
+        font-size: .72rem !important; letter-spacing: .14em !important;
+        text-transform: uppercase !important; border: none !important;
+        border-radius: 8px !important; height: 40px !important;
+        width: 100% !important; margin-top: 2px !important;
+        transition: all .18s ease !important;
     }
     .stButton > button[kind="primary"]:hover {
-        background:linear-gradient(135deg,#fb923c,#f97316) !important;
-        transform:translateY(-1px) !important;
-        box-shadow:0 4px 14px rgba(249,115,22,.35) !important;
+        background: linear-gradient(135deg,#fb923c,#f97316) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 16px rgba(249,115,22,.42) !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <div style="text-align:center; margin-bottom:28px;">
+    # Columns center the card reliably across all screen widths
+    _, col, _ = st.columns([1.5, 1, 1.5])
+    with col:
+        # Card header — logo + title (pure HTML, no widget interaction needed)
+        st.markdown("""
         <div style="
-            display:inline-flex; align-items:center; justify-content:center;
-            width:56px; height:56px;
-            background:linear-gradient(135deg,#f97316,#c2410c);
-            border-radius:14px; margin-bottom:16px;
-            box-shadow:0 6px 24px rgba(249,115,22,.35);
+            background: rgba(10,15,28,0.88);
+            border: 1px solid #1c2840;
+            border-radius: 18px;
+            padding: 30px 24px 22px;
+            text-align: center;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 8px 40px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.03);
+            margin-bottom: 10px;
         ">
-            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="18" width="6" height="10" rx="1.5" fill="white" opacity="0.9"/>
-                <rect x="12" y="10" width="6" height="18" rx="1.5" fill="white"/>
-                <rect x="22" y="3" width="6" height="25" rx="1.5" fill="white" opacity="0.85"/>
-                <polyline points="5,18 15,10 25,3" stroke="white" stroke-width="1.5"
-                    stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.5"/>
-            </svg>
+            <div style="
+                display:inline-flex; align-items:center; justify-content:center;
+                width:56px; height:56px;
+                background: linear-gradient(135deg,#f97316,#c2410c);
+                border-radius:14px; margin-bottom:16px;
+                box-shadow: 0 6px 24px rgba(249,115,22,.42);
+            ">
+                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2"  y="18" width="6" height="10" rx="1.5" fill="white" opacity=".9"/>
+                    <rect x="12" y="10" width="6" height="18" rx="1.5" fill="white"/>
+                    <rect x="22" y="3"  width="6" height="25" rx="1.5" fill="white" opacity=".85"/>
+                    <polyline points="5,18 15,10 25,3" stroke="white" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".5"/>
+                </svg>
+            </div>
+            <div style="font-size:.98rem; font-weight:700; color:#dde6f0; letter-spacing:-.01em; line-height:1.2;">
+                Financial News Analyst
+            </div>
+            <div style="font-size:.58rem; color:#2e3f60; margin-top:5px; letter-spacing:.13em; text-transform:uppercase;">
+                Capstone Project
+            </div>
         </div>
-        <div style="font-size:1rem; font-weight:700; color:#dde6f0; letter-spacing:-.01em; line-height:1.2;">
-            Financial News Analyst
+        """, unsafe_allow_html=True)
+
+        pwd = st.text_input("key", placeholder="Enter access key",
+                            type="password", key="pwd_input", label_visibility="hidden")
+
+        if st.button("Sign In", type="primary", use_container_width=True):
+            if pwd == DEMO_PASSWORD:
+                st.session_state["authenticated"] = True
+                st.rerun()
+            else:
+                st.error("Invalid access key.")
+
+        st.markdown("""
+        <div style="text-align:center; margin-top:14px; font-size:.54rem; color:#151e30; letter-spacing:.1em;">
+            LOCAL &nbsp;·&nbsp; PRIVATE &nbsp;·&nbsp; ZERO EGRESS
         </div>
-        <div style="font-size:.6rem; color:#3a4a6a; margin-top:5px; letter-spacing:.12em; text-transform:uppercase;">
-            Capstone Project
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    pwd = st.text_input("key", placeholder="Enter access key",
-                        type="password", key="pwd_input", label_visibility="hidden")
-
-    if st.button("Sign In", type="primary", use_container_width=True):
-        if pwd == DEMO_PASSWORD:
-            st.session_state["authenticated"] = True
-            st.rerun()
-        else:
-            st.error("Invalid access key.")
-
-    st.markdown("""
-    <div style="text-align:center; margin-top:16px; font-size:.57rem; color:#1e2a40; letter-spacing:.08em;">
-        LOCAL &nbsp;·&nbsp; PRIVATE &nbsp;·&nbsp; ZERO EGRESS
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
 
 if not st.session_state["authenticated"]:
@@ -616,9 +657,24 @@ with st.sidebar:
 _render_tape()
 
 st.markdown("""
-<div style="display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:1px solid #253350;margin-bottom:18px;">
+<div style="display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid #253350;margin-bottom:18px;">
+    <div style="
+        display:inline-flex; align-items:center; justify-content:center;
+        width:34px; height:34px; flex-shrink:0;
+        background:linear-gradient(135deg,#f97316,#c2410c);
+        border-radius:9px;
+        box-shadow:0 3px 12px rgba(249,115,22,.35);
+    ">
+        <svg width="18" height="18" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2"  y="18" width="6" height="10" rx="1.5" fill="white" opacity=".9"/>
+            <rect x="12" y="10" width="6" height="18" rx="1.5" fill="white"/>
+            <rect x="22" y="3"  width="6" height="25" rx="1.5" fill="white" opacity=".85"/>
+            <polyline points="5,18 15,10 25,3" stroke="white" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".5"/>
+        </svg>
+    </div>
     <span style="font-size:1.08rem;font-weight:700;color:#dde6f0;letter-spacing:-.01em;">Financial News Analyst</span>
-    <span style="font-size:.58rem;color:#3a4a6a;font-family:'Fira Code',monospace;letter-spacing:.06em;">◈ qwen3:32b</span>
+    <span style="font-size:.58rem;color:#3a4a6a;font-family:'Fira Code',monospace;letter-spacing:.06em;">qwen3:32b</span>
 </div>
 """, unsafe_allow_html=True)
 

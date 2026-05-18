@@ -34,8 +34,10 @@ def create_data_agent() -> Agent:
     llm = LLM(
         model=AGENT_MODEL,
         base_url=OLLAMA_BASE_URL,
-        temperature=0.1,   # low temperature for factual data retrieval
+        temperature=0.1,
+        max_tokens=900,        # data summaries are concise; cap prevents rambling
         timeout=1800,
+        extra_body={"options": {"num_ctx": 4096}},  # 3 tool calls + response fits in 4k
     )
 
     return Agent(
@@ -57,5 +59,5 @@ def create_data_agent() -> Agent:
         llm=llm,
         verbose=True,
         allow_delegation=False,
-        max_iter=3,   # limit retries to keep response fast
+        max_iter=3,   # 3 tool calls (overview + price + fundamentals) → 3 iterations
     )

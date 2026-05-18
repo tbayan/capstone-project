@@ -32,8 +32,10 @@ def create_analysis_agent() -> Agent:
     llm = LLM(
         model=AGENT_MODEL,
         base_url=OLLAMA_BASE_URL,
-        temperature=0.4,   # balanced creativity for synthesis and structured output
+        temperature=0.4,
+        max_tokens=2200,       # 7-section narrative report; generous but bounded
         timeout=1800,
+        extra_body={"options": {"num_ctx": 8192}},  # data + news context + report generation
     )
 
     return Agent(
@@ -66,5 +68,5 @@ def create_analysis_agent() -> Agent:
         llm=llm,
         verbose=True,
         allow_delegation=False,
-        max_iter=4,   # allow one extra iteration for thorough synthesis
+        max_iter=3,   # 1 RAG retrieval + optional follow-up + synthesis → 3 sufficient
     )
