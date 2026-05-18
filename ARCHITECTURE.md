@@ -10,7 +10,7 @@
 
 | Component | Technology | Rationale |
 |-----------|-----------|-----------|
-| **LLM** | Ollama + qwen3:8b | Local inference, fast on dual 4090 (~1-2s/step), no API costs, GDPR-safe |
+| **LLM** | Ollama + qwen3:8b | Local inference, ~60s full pipeline, think=True on Analysis Agent for CoT reasoning, no API costs, GDPR-safe |
 | **Agent Framework** | CrewAI | Role-based agents with task chaining; clean abstraction over LangChain |
 | **MCP Server** | FastMCP (custom-built) | Project-owned MCP server using the official MCP Python SDK; no third-party servers |
 | **Vector Store** | ChromaDB | Lightweight, embedded, no infrastructure needed, persists to disk |
@@ -65,7 +65,7 @@
 │  (mcp_server/)       │                    │    (rag/)                   │
 │                      │                    │                             │
 │  FastMCP server      │                    │  ChromaDB vector store      │
-│  Port 8000           │                    │  ~500+ document chunks      │
+│  Port 8000           │                    │  52 chunks · 17 seed docs   │
 │                      │                    │                             │
 │  Tools:              │                    │  Seeded with:               │
 │  - get_stock_data    │                    │  - Fundamentals guides      │
@@ -84,7 +84,8 @@
 │                      OLLAMA (Local LLM Server)                        │
 │                      http://localhost:11434                           │
 │                                                                       │
-│   qwen2.5:7b      — Agent reasoning and synthesis (~1-2s/step)       │
+│   qwen3:8b        — All agents; think=False (data/news), think=True  │
+│                     (analysis) for full CoT reasoning (~60s pipeline) │
 │   nomic-embed-text — Document and query embedding for RAG             │
 └──────────────────────────────────────────────────────────────────────┘
            │
@@ -210,7 +211,7 @@ The MCP server is built **from scratch** using the `mcp` Python SDK (FastMCP). I
 
 2. **In-memory rate limiting**: Resets on server restart. For production, replace with Redis.
 
-3. **7B model limitations**: `qwen2.5:7b` is capable but may produce less nuanced analysis than larger models. Switchable to `qwen2.5:14b` in settings.py with no code changes.
+3. **Model limitations**: `qwen3:8b` (5.2 GB) runs at ~100 tok/s and produces strong, reasoning-capable output. Switchable to `qwen3:14b` or `qwen3:32b` in `config/settings.py` via the `AGENT_MODEL` env var with no code changes.
 
 4. **RSS feed reliability**: Public RSS feeds may go down or change structure. yfinance news endpoint is the primary fallback.
 

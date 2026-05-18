@@ -1,5 +1,5 @@
 # Financial News Analyst — System Overview
-> Generated: May 18, 2026 · Commit `a5be7c9` · Branch `main`
+> Updated: May 18, 2026 · Branch `main`
 
 ---
 
@@ -37,8 +37,9 @@ User (Browser)
          ↕ ALL LLM CALLS ↕
 ┌─────────────────────────────────────────────────────────┐
 │  Ollama  (localhost:11434)                              │
-│  • qwen2.5:7b        ← all 3 agents use this           │
-│  • nomic-embed-text  ← RAG embeddings only             │
+│  • qwen3:8b         ← all 3 agents (think=False for data/news,          │
+│                      think=True for analysis)                          │
+│  • nomic-embed-text  ← RAG embeddings only                             │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -53,15 +54,16 @@ Three models are installed:
 
 | Model | Size | Used for |
 |---|---|---|
-| `qwen2.5:7b` | 4.7 GB | All 3 agents (reasoning, text generation) |
+| `qwen3:8b` | 5.2 GB | All 3 agents (reasoning, text generation, CoT synthesis) |
 | `nomic-embed-text` | 274 MB | RAG — converts text into 768-dim vectors |
-| `llama3:8b` | 4.7 GB | Installed but **not currently used** |
 
-**How `qwen2.5:7b` works:**
-It is a 7-billion-parameter transformer model by Alibaba Cloud. Quantized to ~4-bit
-precision so it fits in ~5 GB RAM. It receives a prompt (task description + tool results
-+ context) and generates the next token repeatedly until done. It runs entirely on your
-CPU/GPU — no internet required.
+**How `qwen3:8b` works:**
+It is an 8-billion-parameter transformer model by Alibaba Cloud (Qwen3 architecture).
+Quantized to ~4-bit precision so it fits in ~5.2 GB VRAM. It supports an optional
+*thinking* mode (`think=True`) that emits chain-of-thought reasoning tokens before the
+final answer — used on the Analysis Agent for deeper synthesis. Data and News agents
+run with `think=False` for maximum speed (~109 tok/s). It runs entirely on your GPU —
+no internet required.
 
 **How `nomic-embed-text` works:**
 A smaller model that converts any text string into a 768-dimensional float vector (an
@@ -109,7 +111,7 @@ Does:      calls RAG tool once:
               → nomic-embed-text embeds the query → 768-dim vector
               → ChromaDB cosine-similarity search → top 5 chunks above threshold 0.4
               → returns pe_ratio_analysis.txt, sector_rotation_guide.txt, etc.
-Then:      qwen2.5:7b synthesises ALL of:
+Then:      qwen3:8b synthesises ALL of:
               - live market data    (from Agent 1)
               - live news           (from Agent 2)
               - historical frameworks (from RAG)
@@ -130,7 +132,7 @@ Each agent runs a ReAct (Reason + Act) loop internally:
 6. Final output passed as context to the next agent
 ```
 
-Max iterations per agent: 4 (configurable in agent definitions).
+Max iterations: Data Agent 3 · News Agent 2 · Analysis Agent 3 (configurable in agent definitions).
 
 ---
 
@@ -159,7 +161,7 @@ The 5 tools and their data sources:
 | `get_stock_data` | `yfinance` → Yahoo Finance API | Real-time (15-min delay) |
 | `get_company_fundamentals` | `yfinance` → Yahoo Finance API | Daily |
 | `get_market_overview` | `yfinance` → SPY/QQQ/DIA/VIX | Real-time |
-| `search_financial_news` | `feedparser` → 5 RSS feeds | Live (minutes old) |
+| `search_financial_news` | `feedparser` → RSS feeds; word-level + ticker-alias matching | Live (minutes old) |
 | `get_ticker_news` | `yfinance` → Yahoo Finance news | Hours old |
 
 **Crypto tickers** are normalised automatically:
@@ -292,7 +294,7 @@ financial_news_analyst/
 | Observability | ✅ | SQLite audit log, metrics, ratings |
 | Test suite (positive + negative + edge) | ✅ | 95/96 pass |
 | Streamlit UI | ✅ | Auth, history, RAG sources panel |
-| Local LLM only — no cloud API | ✅ | Ollama qwen2.5:7b throughout |
+| Local LLM only — no cloud API | ✅ | Ollama qwen3:8b throughout |
 | Crypto ticker support | ✅ | BTC/ETH/SOL auto-normalised |
 | Current date injected into prompts | ✅ | All three task descriptions |
 | Report stored + history clickable | ✅ | Since commit `a5be7c9` |

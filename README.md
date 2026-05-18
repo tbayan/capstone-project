@@ -48,7 +48,7 @@ CrewAI Orchestrator  (sequential process)
   │
   ▼
 Ollama  (localhost:11434)
-  ├── qwen3:32b          — all agent reasoning and synthesis (local, 2× RTX 4090)
+  ├── qwen3:8b            — all agents; think=False for data/news, think=True for analysis (~60s pipeline)
   └── nomic-embed-text   — document and query embedding (RAG only)
 ```
 
@@ -59,7 +59,7 @@ Ollama  (localhost:11434)
 | Component | Technology | Notes |
 |-----------|------------|-------|
 | Agent orchestration | **CrewAI 0.130** — sequential process | Agents share context via task outputs |
-| LLM | **Ollama + qwen3:32b** | Local inference, 2× RTX 4090 |
+| LLM | **Ollama + qwen3:8b** | Local inference, ~60s full pipeline; think=True on Analysis Agent |
 | Embeddings | **nomic-embed-text** via Ollama | Fixed at index build time — not swapped with LLM |
 | MCP server | **FastMCP (mcp 1.9)** — custom-built, 5 tools | Owned entirely by this project |
 | Vector store | **ChromaDB** — embedded, persists to disk | 17 docs → 52 chunks @ 800 tokens |
@@ -77,7 +77,7 @@ Ollama  (localhost:11434)
 
 - **Python 3.11+**
 - **Ollama** — [ollama.ai](https://ollama.ai)
-- **NVIDIA GPU** — 24 GB+ VRAM recommended for qwen3:32b (dual 4090 used in development; a single 4090 or 3090 works with `num_ctx` tuning)
+- **NVIDIA GPU** — 8 GB+ VRAM (RTX 3080 class or higher); `qwen3:8b` fits in 5.2 GB
 
 ---
 
@@ -86,7 +86,7 @@ Ollama  (localhost:11434)
 ### 1. Pull models
 
 ```bash
-ollama pull qwen3:32b
+ollama pull qwen3:8b
 ollama pull nomic-embed-text
 ```
 
@@ -104,7 +104,7 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env to override:
 #   DEMO_PASSWORD   — access key shown on login screen (default: capstone2026)
-#   AGENT_MODEL     — e.g. ollama_chat/qwen2.5:14b for a lighter model
+#   AGENT_MODEL     — e.g. ollama_chat/qwen3:14b for a more powerful model
 #   MCP_SERVER_PORT — default 8000
 ```
 
@@ -292,7 +292,7 @@ All settings live in `config/settings.py` and are fully overridable via `.env`:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `DEMO_PASSWORD` | `capstone2026` | UI access key |
-| `AGENT_MODEL` | `ollama_chat/qwen3:32b` | LLM for all agents |
+| `AGENT_MODEL` | `ollama_chat/qwen3:8b` | LLM for all agents |
 | `EMBEDDING_MODEL` | `nomic-embed-text` | Embedding model (RAG) |
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama endpoint |
 | `MCP_SERVER_PORT` | `8000` | FastMCP server port |

@@ -23,7 +23,7 @@ The core challenge: **how do we bring structured, multi-perspective investment a
 3. **Retrieves historical patterns** from a RAG knowledge base of financial analysis guides and company fundamentals
 4. **Synthesises all three streams** into a structured 7-section investment report with bull/bear scenarios and risk flags
 
-The entire system runs **locally on the user's machine** — no cloud APIs, no API keys, no data egress. The LLM (Ollama qwen2.5:7b) and embedding model (nomic-embed-text) run on local GPU hardware.
+The entire system runs **locally on the user's machine** — no cloud APIs, no API keys, no data egress. The LLM (Ollama `qwen3:8b`) and embedding model (`nomic-embed-text`) run on local GPU hardware.
 
 ---
 
@@ -32,7 +32,7 @@ The entire system runs **locally on the user's machine** — no cloud APIs, no A
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
 | Agent Orchestration | CrewAI | Sequential 3-agent pipeline |
-| LLM | Ollama (qwen2.5:7b) | Local inference, ~1-2s per agent step |
+| LLM | Ollama (qwen3:8b) | Local inference, ~60s full pipeline; think=True for analysis CoT |
 | MCP Server | FastMCP (custom-built) | Exposes financial data tools to agents |
 | Knowledge Base | ChromaDB + nomic-embed-text | RAG over financial analysis documents |
 | Market Data | yfinance | Free stock data (prices, fundamentals) |
@@ -52,7 +52,7 @@ The entire system runs **locally on the user's machine** — no cloud APIs, no A
 
 Through development and testing, this project established:
 
-1. **7B models are sufficient for structured financial tasks** when given explicit role descriptions, tool access, and structured output requirements. The qwen2.5:7b model consistently produced coherent 7-section reports on valid tickers.
+1. **Qwen3:8b delivers production-quality structured financial analysis** when given explicit role descriptions, tool access, and structured output requirements. Enabling `think=True` on the Analysis Agent activates the model’s full chain-of-thought reasoning, producing coherent 7-section reports while the data/news agents use `think=False` for maximum speed.
 
 2. **MCP as an abstraction layer significantly improves agent testability**. Because all data access is routed through the MCP server, each tool can be tested independently of the agent layer.
 

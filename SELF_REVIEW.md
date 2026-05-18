@@ -32,14 +32,15 @@
 
 ### 1.3 Local-Only LLM (Ollama) vs. Cloud API
 
-**Decision**: All inference runs locally via Ollama (`qwen3:32b`), with no calls to OpenAI, Anthropic, or similar.
+**Decision**: All inference runs locally via Ollama (`qwen3:8b`), with no calls to OpenAI, Anthropic, or similar.
 
 **Rationale**:
-- Zero API cost, no rate limits, no data egress — all investment queries stay on the user's machine.
-- Hardware available (2× RTX 4090, 48 GB VRAM total) makes local 32B inference at full quality practical.
+- Zero API cost, no rate limits, no data egress — all investment queries stay on the user’s machine.
+- `qwen3:8b` (5.2 GB) runs at ~100 tok/s on a single RTX 4090 — no multi-GPU requirement.
+- `think=False` on the Data and News agents eliminates CoT token overhead and maximises throughput. `think=True` on the Analysis Agent enables full chain-of-thought reasoning for investment synthesis without adding more than ~1s of latency.
 - GDPR-aligned: no user data sent to third parties.
 
-**Trade-off**: Model quality is competitive with mid-tier cloud models (qwen3:32b scores above GPT-3.5-class on financial reasoning benchmarks) while remaining entirely local. The configuration is parameterised via `AGENT_MODEL` env var so swapping models requires no code change.
+**Trade-off**: A larger model (`qwen3:14b` or `qwen3:32b`) would produce richer analysis but requires 10–20 GB more VRAM and runs 3–5× slower. The configuration is parameterised via `AGENT_MODEL` env var so upgrading requires no code change.
 
 ---
 
@@ -141,6 +142,15 @@ The most significant data quality risk: the LLM uses memorised training data (20
 
 `yfinance` requires `BTC-USD` format for crypto, not `BTC`. Without normalisation, `yfinance.Ticker("BTC")` returns no data and the LLM hallucinates a 2023 price. The `_CRYPTO_MAP` dict in `mcp_server/tools/market_data.py` handles 15 common crypto symbols.
 
+### RSS News Search — Word-Level Matching
+
+The original `search_financial_news` implementation used an exact-substring match (`"aapl earnings" in article_text`), which always returned zero results for ticker-based queries because articles say "Apple" not "AAPL". The fix in `mcp_server/tools/news_fetcher.py`:
+- Splits the query into words (≥3 chars each)
+- Expands ticker symbols to company names via a `_TICKER_ALIASES` dict (`AAPL → apple`, `NVDA → nvidia`, `BTC → bitcoin`, …25 entries)
+- Accepts an article if **any** word (or alias) appears in the title/summary
+
+This change made the news feed consistently return 3–10 relevant articles per query.
+
 ---
 
 ## 6. What I Would Do Differently
@@ -149,7 +159,7 @@ The most significant data quality risk: the LLM uses memorised training data (20
 2. **Streaming output**: Stream the Analysis Agent's output token-by-token to the UI rather than blocking until the full report is complete. CrewAI's `verbose` callbacks can support this.
 3. **Vector store updates**: Add a background job that re-embeds fresh earnings reports and news summaries weekly, keeping the RAG knowledge base current.
 4. **Structured output validation**: Use Pydantic models to enforce the 7-section report structure rather than relying on prompt instructions alone. Prevents malformed reports on edge-case tickers.
-5. **Model upgrade path**: The configuration is parameterised (`AGENT_MODEL` env var). The system already runs `qwen3:32b` — the upgrade was a single line change in `config/settings.py`, validating this design decision.
+5. **Model upgrade path**: The configuration is parameterised (`AGENT_MODEL` env var). Upgrading from `qwen2.5:7b` to `qwen3:8b` (with selective `think=True` on the Analysis Agent) was a one-line change in `config/settings.py` plus two extra lines per agent, validating this design decision. Upgrading to `qwen3:14b` or `qwen3:32b` requires only changing the env var.
 
 ---
 

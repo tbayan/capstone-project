@@ -689,19 +689,12 @@ st.markdown("""
 
 # ── Run analysis ───────────────────────────────────────────────────────────────
 
-if run_button and ticker_input and question_input:
-    try:
-        clean_ticker, clean_question = validate_request(ticker_input, question_input, session_id)
-    except ValidationError as e:
-        st.error(str(e))
-        st.stop()
+# Pop any pending run saved by the button handler (triggers after a clean rerun)
+_pending = st.session_state.pop("_pending_run", None)
 
-    st.session_state.update({
-        "analysis_running": True,
-        "last_result": None,
-        "last_db_id": None,
-        "viewed_history": None,
-    })
+if _pending:
+    clean_ticker   = _pending["ticker"]
+    clean_question = _pending["question"]
     log_request_start(clean_ticker, clean_question)
 
     # Chart is always first
@@ -827,6 +820,22 @@ if run_button and ticker_input and question_input:
             file_name=f"fna_{clean_ticker}_{time.strftime('%Y%m%d_%H%M')}.txt",
             mime="text/plain",
         )
+
+elif run_button and ticker_input and question_input:
+    # Validate input, clear old state, then rerun so the page is blank before analysis starts
+    try:
+        clean_ticker, clean_question = validate_request(ticker_input, question_input, session_id)
+    except ValidationError as e:
+        st.error(str(e))
+        st.stop()
+    st.session_state.update({
+        "analysis_running": True,
+        "last_result": None,
+        "last_db_id": None,
+        "viewed_history": None,
+        "_pending_run": {"ticker": clean_ticker, "question": clean_question},
+    })
+    st.rerun()
 
 elif run_button and (not ticker_input or not question_input):
     st.warning("Ticker and question are both required.")
