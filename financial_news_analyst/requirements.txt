@@ -22,9 +22,13 @@ streamlit==1.45.1
 
 # Observability & logging
 loguru==0.7.3
+psutil==6.1.1
 
 # Security & validation
 python-dotenv==1.1.0
+
+# Caching
+cachetools==5.5.2
 
 # Testing
 pytest==8.3.5

@@ -21,6 +21,7 @@ from typing import Optional
 
 import streamlit as st
 
+import psutil
 from security.validators import validate_request, ValidationError, rate_limiter
 from observability.logger import (
     log_request_start, log_request_end, save_rating,
@@ -122,6 +123,16 @@ with st.sidebar:
     col2.metric("Avg Time", f"{(metrics.get('avg_elapsed_sec') or 0):.1f}s")
     col1.metric("👍 Ratings", metrics.get("thumbs_up", 0))
     col2.metric("👎 Ratings", metrics.get("thumbs_down", 0))
+
+    # Live system resource usage
+    st.caption("**System Resources**")
+    cpu = psutil.cpu_percent(interval=None)
+    mem = psutil.virtual_memory()
+    proc_mb = round(psutil.Process().memory_info().rss / 1_048_576, 1)
+    res_c1, res_c2 = st.columns(2)
+    res_c1.metric("CPU", f"{cpu:.0f}%")
+    res_c2.metric("RAM Used", f"{mem.percent:.0f}%")
+    st.caption(f"Process: `{proc_mb} MB` · System free: `{round(mem.available/1_073_741_824,1)} GB`")
 
     st.divider()
 

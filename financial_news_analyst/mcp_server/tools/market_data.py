@@ -12,6 +12,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from typing import Any
 import yfinance as yf
+from cachetools import TTLCache
+import threading
+
+# ── TTL cache — 5-minute freshness window ──────────────────────────────────────
+# Prevents redundant yfinance API calls when the same ticker is queried multiple
+# times within a short period (e.g. during the same crew run or rapid re-queries).
+_cache: TTLCache = TTLCache(maxsize=128, ttl=300)   # 5 minutes
+_cache_lock = threading.Lock()
 
 from config.settings import DEFAULT_HISTORY_PERIOD
 
@@ -45,6 +53,10 @@ def fetch_stock_data(symbol: str, period: str = DEFAULT_HISTORY_PERIOD) -> dict[
         latest_close, price_change_pct.
     """
     symbol = _normalize_symbol(symbol)
+    cache_key = f"stock_data:{symbol}:{period}"
+    with _cache_lock:
+        if cache_key in _cache:
+            return _cache[cache_key]
     try:
         ticker = yf.Ticker(symbol)
         hist = ticker.history(period=period)
@@ -71,13 +83,16 @@ def fetch_stock_data(symbol: str, period: str = DEFAULT_HISTORY_PERIOD) -> dict[
     if latest_close and first_close and first_close != 0:
         price_change_pct = round(((latest_close - first_close) / first_close) * 100, 2)
 
-    return {
+    result = {
         "symbol": symbol,
         "period": period,
         "latest_close": latest_close,
         "price_change_pct": price_change_pct,
         "records": records,
     }
+    with _cache_lock:
+        _cache[cache_key] = result
+    return result
 
 
 def fetch_company_fundamentals(symbol: str) -> dict[str, Any]:
@@ -92,6 +107,10 @@ def fetch_company_fundamentals(symbol: str) -> dict[str, Any]:
         52-week range, dividend yield, analyst target price.
     """
     symbol = _normalize_symbol(symbol)
+    cache_key = f"fundamentals:{symbol}"
+    with _cache_lock:
+        if cache_key in _cache:
+            return _cache[cache_key]
     try:
         ticker = yf.Ticker(symbol)
         info = ticker.info
@@ -114,7 +133,7 @@ def fetch_company_fundamentals(symbol: str) -> dict[str, Any]:
                 return val
         return default
 
-    return {
+    fundamentals = {
         "symbol": symbol,
         "company_name": _safe("longName", symbol),
         "sector": _safe("sector", "N/A"),
@@ -137,6 +156,9 @@ def fetch_company_fundamentals(symbol: str) -> dict[str, Any]:
         "beta": _safe("beta"),
         "description": (_safe("longBusinessSummary") or "")[:600],  # cap summary length
     }
+    with _cache_lock:
+        _cache[cache_key] = fundamentals
+    return fundamentals
 
 
 def fetch_market_overview() -> dict[str, Any]:

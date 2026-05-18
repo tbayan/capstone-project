@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import sqlite3
 import time
 import json
+import psutil
 from contextlib import contextmanager
 from typing import Optional
 
@@ -67,6 +68,8 @@ def init_db() -> None:
                 news_len     INTEGER,
                 report_len   INTEGER,
                 token_est    INTEGER,
+                cpu_percent  REAL,
+                memory_mb    REAL,
                 error        TEXT,
                 rating       INTEGER   -- NULL until rated; 1=thumbs up, -1=thumbs down
             )
@@ -91,12 +94,17 @@ def init_db() -> None:
             )
         """)
         conn.commit()
-        # Schema migration: add 'report' column if it doesn't exist yet
-        try:
-            conn.execute("ALTER TABLE analysis_requests ADD COLUMN report TEXT")
-            conn.commit()
-        except Exception:
-            pass  # Column already exists
+        # Schema migrations: add columns if they don't exist yet
+        for col, typedef in [
+            ("report", "TEXT"),
+            ("cpu_percent", "REAL"),
+            ("memory_mb", "REAL"),
+        ]:
+            try:
+                conn.execute(f"ALTER TABLE analysis_requests ADD COLUMN {col} {typedef}")
+                conn.commit()
+            except Exception:
+                pass  # Column already exists
 
 
 # Initialise on import
@@ -132,9 +140,14 @@ def log_request_end(result: dict) -> int:
     # Estimate token usage: chars / 4 (rough approximation)
     token_est = (data_len + news_len + report_len) // 4
 
+    # System resource snapshot at request completion
+    cpu_percent = psutil.cpu_percent(interval=0.1)
+    memory_mb = round(psutil.Process().memory_info().rss / 1_048_576, 1)
+
     logger.success(
         f"[REQUEST END] ticker={ticker} elapsed={elapsed}s "
-        f"report_len={report_len} token_est={token_est}"
+        f"report_len={report_len} token_est={token_est} "
+        f"cpu={cpu_percent}% mem={memory_mb}MB"
     )
 
     report_text = result.get("report", "")
@@ -142,9 +155,11 @@ def log_request_end(result: dict) -> int:
     with _get_conn() as conn:
         cur = conn.execute(
             """INSERT INTO analysis_requests
-               (timestamp, ticker, question, elapsed_sec, data_len, news_len, report_len, token_est, report)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (timestamp, ticker, question, elapsed, data_len, news_len, report_len, token_est, report_text),
+               (timestamp, ticker, question, elapsed_sec, data_len, news_len, report_len,
+                token_est, cpu_percent, memory_mb, report)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (timestamp, ticker, question, elapsed, data_len, news_len, report_len,
+             token_est, cpu_percent, memory_mb, report_text),
         )
         conn.commit()
         return cur.lastrowid

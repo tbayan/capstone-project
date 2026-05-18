@@ -20,6 +20,37 @@ import time
 from collections import defaultdict
 from typing import Optional
 
+# ── PII detection patterns ─────────────────────────────────────────────────────
+# Detects common PII in query/output text before it reaches the LLM or is stored.
+
+_PII_PATTERNS: dict[str, re.Pattern] = {
+    "email":    re.compile(r"[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"),
+    "phone":    re.compile(r"\b(\+?1[\s\-.]?)?\(?\d{3}\)?[\s\-.]?\d{3}[\s\-.]?\d{4}\b"),
+    "ssn":      re.compile(r"\b\d{3}[\-\s]\d{2}[\-\s]\d{4}\b"),
+    "credit_card": re.compile(r"\b(?:\d{4}[\s\-]?){3}\d{4}\b"),
+}
+
+
+def detect_pii(text: str) -> list[str]:
+    """
+    Scan text for common PII patterns.
+
+    Returns:
+        List of PII type names found (e.g. ['email', 'phone']), empty if clean.
+    """
+    found = []
+    for pii_type, pattern in _PII_PATTERNS.items():
+        if pattern.search(text):
+            found.append(pii_type)
+    return found
+
+
+def redact_pii(text: str) -> str:
+    """Replace PII matches with [REDACTED-<type>] placeholders."""
+    for pii_type, pattern in _PII_PATTERNS.items():
+        text = pattern.sub(f"[REDACTED-{pii_type.upper()}]", text)
+    return text
+
 from config.settings import (
     MAX_TICKER_LENGTH,
     MAX_QUERY_LENGTH,
@@ -115,6 +146,11 @@ def validate_query(query: str) -> str:
                 f"Query contains a disallowed phrase: '{pattern}'. "
                 "Please ask a genuine investment question."
             )
+
+    # PII check — redact rather than reject (privacy protection)
+    pii_found = detect_pii(query)
+    if pii_found:
+        query = redact_pii(query)
 
     return query
 
