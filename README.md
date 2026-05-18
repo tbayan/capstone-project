@@ -19,7 +19,7 @@ Repository: [github.com/tbayan/capstone-project](https://github.com/tbayan/capst
 | Code Repository | this repo | ✅ Complete |
 | Test Suite (96 tests) | [tests/](tests/) | ✅ Complete |
 | README & Setup | [README.md](README.md) | ✅ Complete |
-| Video Demo | *(link will be added after recording)* | ⏳ Pending |
+| Video Demo | Done, Link provided| ✅ Complete |
 
 ---
 
