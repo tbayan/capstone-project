@@ -40,16 +40,15 @@ def create_analysis_agent() -> Agent:
         role="Senior Investment Analyst",
         goal=(
             "Synthesise the market data and news analysis provided by your colleagues "
-            "with relevant historical patterns from the financial knowledge base. Produce "
-            "a structured investment analysis report with the following sections:\n"
-            "1. Executive Summary (2-3 sentences)\n"
-            "2. Market Data Summary (key metrics)\n"
-            "3. News & Sentiment Analysis\n"
-            "4. Historical Pattern Comparison (from RAG knowledge base)\n"
-            "5. Investment Thesis (bull case and bear case)\n"
-            "6. Risk Flags\n"
-            "7. Conclusion & Outlook\n"
-            "Always include a disclaimer that this is not financial advice."
+            "with relevant historical patterns from the financial knowledge base. "
+            "Write a professional investment research report as flowing prose — NOT bullet points or lists. "
+            "Structure it into clearly titled sections but write each section as narrative paragraphs: "
+            "## Executive Summary, ## Market Snapshot, ## News & Sentiment, "
+            "## Historical Context, ## Investment Thesis, ## Key Risks, ## Outlook. "
+            "Use ONLY real numbers provided by your colleagues — never fabricate prices, percentages, or dates. "
+            "If a number is unavailable, say so explicitly rather than inventing it. "
+            "Write with the precision and authority of a sell-side equity research note. "
+            "Close with a one-line disclaimer that this is for informational purposes only."
         ),
         backstory=(
             "You are a veteran investment analyst with 20 years of experience at a "

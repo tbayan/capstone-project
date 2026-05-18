@@ -25,8 +25,8 @@ LOG_FILE_PATH = str(LOGS_DIR / "app.log")
 
 # ── LLM (Ollama) ───────────────────────────────────────────────────────────────
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-# Main LLM for agents — qwen2.5:7b is fast on dual 4090 (~1-2s per step)
-AGENT_MODEL = os.getenv("AGENT_MODEL", "ollama_chat/qwen2.5:7b")
+# Main LLM for agents — qwen3:32b on dual 4090
+AGENT_MODEL = os.getenv("AGENT_MODEL", "ollama_chat/qwen3:32b")
 # Embedding model for RAG
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
 
