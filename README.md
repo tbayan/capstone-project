@@ -152,6 +152,8 @@ streamlit run ui/app.py
 
 Log in with the access key set in `.env` (default: `capstone2026`).
 
+![Login page](Figs/Login_Page.png)
+
 ---
 
 ## Tests
@@ -297,6 +299,10 @@ Receives context from agents 01 and 02. Calls `retrieve_historical_patterns` (RA
 - **Narrative reports** — LLM output rendered as flowing prose paragraphs, not bullet lists
 - **History** — sidebar shows last 6 analyses with colour-coded feedback dots, fully clickable
 - **Auth + logout** — password gate, session-scoped rate limiter, logout button
+
+![Dashboard — analysis in progress](Figs/Main_01.png)
+
+![Dashboard — investment report](Figs/Main_02.png)
 
 ---
 
